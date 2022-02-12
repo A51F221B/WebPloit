@@ -14,8 +14,9 @@ Webploit is a **Web Application vulnerability testing automation framework**, wh
 
 
 ## Directions 
-#### Our goal is to automate the following vulnerabilities (as of now)
-- Open Redirect Vulnerability
+#### Our goal is to automate the exploitation of following vulnerabilities
+#### Open Redirect Vulnerability
+- Reflected
 
 #### XSS based 
 - Reflected XSS
