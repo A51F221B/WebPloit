@@ -1,37 +1,53 @@
-## Welcome to GitHub Pages
+# Webploit
+----
 
-You can use the [editor on GitHub](https://github.com/A51F221B/Webploit/edit/main/docs/index.md) to maintain and preview the content for your website in Markdown files.
+## What is Webploit
+Webploit is a **Web Application vulnerability testing automation framework**, which would focus on providing a user friendly experience along with fast and automated testing.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## Our project will contain three parts:
+- ### Terminal based interface
+    Initially we will create a terminal interface where a user could provide a url, the url will be used by our app for further reconnaissance i.e. subdomain enumeration. 
+- ### Django based admin interface
+    The second phase will be to create a admin interface where the user could see all the subdomains found that are being scanned for vulnerabilities.We could add additional features to enhance the user experience.
+- ### A Front End
+   The last phase would be to create a frontend that is user friendly so that people with non technical backgrounds can understand what is going on. Also, This could help us further turn this app into a potential startup.
 
-### Markdown
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+## Directions 
+#### Our goal is to automate the exploitation of following vulnerabilities
+#### Open Redirect Vulnerability
+- Reflected
 
-```markdown
-Syntax highlighted code block
+#### XSS based 
+- Reflected XSS
+- Stored XSS
+- DOM-based XSS
 
-# Header 1
-## Header 2
-### Header 3
+#### SQL based
+- `UNION` based SQL
+- Blind SQL injection
 
-- Bulleted
-- List
+## Technologies
+The technologies we could be using are
+- Python
+- Django
+- git
+- Any Frontend frameworks
 
-1. Numbered
-2. List
+### Features we plan to include 
+- Automated Testing
+- UI experience with a frontend
+- A database that could maintain all the records
 
-**Bold** and _Italic_ and `Code` text
+### Novelty
+We plan to use `Discord API` to enhance the testing. 
+#### Idea
+User could install Discord app on their mobile phone. There would be a discord bot connected to the backend of the app. A user could simply give commands to the bot using simple text messages ! For example a user could send the text `Domain --name au.edu.pk` and the bot will send this message to the backend of the app (which is live on a server) and the app will check for all the available domains and return the result to their mobile app !
+So this means everything could be done using a simple mobile app !
+#### Reason
+We are using discord api as we can access it with a few simple clicks.
 
-[Link](url) and ![Image](src)
-```
+# IMPORTANT NOTE
+The technologies mentioned above are just tools that we are using to achieve our goal i.e. Automating Vulnerability testing. So, these tools could change in future according to the needs of our project.We could be using additional technologies in the future that are not mentioned here.
+> The goal of our project will not change.
 
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/A51F221B/Webploit/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
