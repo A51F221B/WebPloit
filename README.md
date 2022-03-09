@@ -1,7 +1,7 @@
    ----
 
 ## What is WebPloit
-WebPloit is a **Web Application vulnerability testing automation framework**, which would focus on providing a user friendly experience along with fast and automated testing.
+WebPloit is a **Web Application vulnerability testing automation tool**, which would focus on providing a user friendly experience along with fast and automated testing.
 
 ## Objective
 To develop a tool capable of assessing security vulnerabilities in web applications.
