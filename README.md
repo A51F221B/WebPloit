@@ -1,5 +1,4 @@
-# Webploit
-----
+   ----
 
 ## What is Webploit
 Webploit is a **Web Application vulnerability testing automation framework**, which would focus on providing a user friendly experience along with fast and automated testing.
@@ -51,5 +50,3 @@ We are using discord api as we can access it with a few simple clicks.
 The technologies mentioned above are just tools that we are using to achieve our goal i.e. Automating Vulnerability testing. So, these tools could change in future according to the needs of our project.We could be using additional technologies in the future that are not mentioned here.
 > The goal of our project will not change.
 
-
-testing by ozair
