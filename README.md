@@ -1,10 +1,16 @@
-   ----
+<img src="logo.png" alt="WebPloit logo">
+
+<h1 align="center">WebPloit</h1>
+
+---
 
 ## What is WebPloit
 WebPloit is a **Web Application vulnerability testing automation tool**, which would focus on providing a user friendly experience along with fast and automated testing.
 
 ## Objective
 To develop a tool capable of assessing security vulnerabilities in web applications.
+
+
 
 ## Our project will contain three parts:
 - ### Terminal based interface
@@ -29,7 +35,8 @@ To develop a tool capable of assessing security vulnerabilities in web applicati
 - `UNION` based SQL
 - Blind SQL injection
 
-### XXE (XML Externel Entity)
+#### XXE (XML Externel Entity)
+
 
 
 ## Technologies
@@ -53,6 +60,8 @@ User could install Discord app on their mobile phone. There would be a discord b
 So this means everything could be done using a simple mobile app !
 
 
+---
+
 ## Timeline
 ### FYP - I (Information Gathering)
 - Research
@@ -71,8 +80,10 @@ So this means everything could be done using a simple mobile app !
 - Adding User Sign-up and Sign-In functionality
 
 
+---
 
 # IMPORTANT NOTE
 The technologies mentioned above are just tools that we are using to achieve our goal i.e. Automating Vulnerability testing. So, these tools could change in future according to the needs of our project.We could be using additional technologies in the future that are not mentioned here.
+
 > The goal of our project will not change.
 
