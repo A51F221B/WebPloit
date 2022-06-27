@@ -1,7 +1,9 @@
+from queue import Queue
 import requests
 import re
 from bs4 import BeautifulSoup
 from config import API_key
+from threading import Thread
 import shodan
 import json
 import urllib
@@ -17,7 +19,11 @@ class GoogleEnum:
     """
     subdomains=[] 
 
-    def ReturnSourceCode(self,url):
+    def __init__(self,url) -> None:
+        self.url=url
+        self.GetDomain()
+
+    def ReturnSourceCode(self,query):
         """Return the source code for the provided URL. 
 
         Args: 
@@ -29,7 +35,7 @@ class GoogleEnum:
 
         try:
             session = HTMLSession()
-            response = session.get(url)
+            response = session.get(query)
             return response ## returns 200 if OK
 
         except requests.exceptions.RequestException as e:
@@ -56,7 +62,7 @@ class GoogleEnum:
                 links.remove(url)
                 #self.subdomains=links # adding these links to our one universal list for keeping domains
         return links
-  
+    
 
     def GetUniqueDomains(self,links):
         for link in links:
@@ -67,8 +73,8 @@ class GoogleEnum:
 
 
 
-    def GetDomain(self,query):
-        return self.GetUniqueDomains(self.scrape_google(query))
+    def GetDomain(self):
+         print(self.GetUniqueDomains(self.scrape_google(self.url)))
     
 
 class Shodan:
@@ -89,22 +95,55 @@ class Dictionary:
     """
     This takes a simple bruteforce approach towards subdomains finding by simply providing a input file
     """
+    q = Queue()
+    numThreads = 20
+
+    def __runner__(self, domain):
+        subdomain = self.q.get()
+        print(f"Current domain: {subdomain}")
+        url1 = f"http://{subdomain}.{domain}"
+        url2 = f"https://{subdomain}.{domain}"
+        try:
+            print("Fetching:{}".format(url1))
+            requests.get(url1)
+            print(f"Discovered URL: {url1}")
+            requests.get(url2)
+            print(f"Discovered URL: {url2}")
+        except requests.ConnectionError:
+            pass
+        self.q.task_done()
+
 
     def FindDomain(self,domain):
         file = open('wordlist.txt','r')
         content = file.read()
         subdomains = content.splitlines()
 
-        for subdomain in subdomains:
-            url1 = f"http://{subdomain}.{domain}"
-            url2 = f"https://{subdomain}.{domain}"
-            try:
-                requests.get(url1)
-                print(f"Discovered URL: {url1}")
-                requests.get(url2)
-                print(f"Discovered URL: {url2}")
-            except requests.ConnectionError:
-                pass
+
+        # for th in range(self.numThreads):
+        #     th = Thread(target=self.__runner__, args=(domain,), daemon=True)
+        #     th.start()
+        
+        # for subdomain in subdomains:
+        #     self.q.put(subdomain)
+		
+        # self.q.join()
+
+
+        # for subdomain in subdomains:
+        #     url1 = f"http://{subdomain}.{domain}"
+        #     url2 = f"https://{subdomain}.{domain}"
+        #     try:
+        #         requests.get(url1)
+        #         print(f"Discovered URL: {url1}")
+        #         requests.get(url2)
+        #         print(f"Discovered URL: {url2}")
+        #     except requests.ConnectionError:
+        #         pass
+
+
+
+
 
 
 

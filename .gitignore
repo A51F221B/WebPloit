@@ -3,3 +3,4 @@ test.py
 /.vscode
 /.obsidian
 config.py
+threader.py
