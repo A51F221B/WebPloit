@@ -1,13 +1,10 @@
 from queue import Queue
 import requests
-import re
-from bs4 import BeautifulSoup
 from config import API_key
 from threading import Thread
 import shodan
 import json
 import urllib
-import pandas as pd
 from urllib.parse import urlparse
 from requests_html import HTML
 from requests_html import HTMLSession
@@ -68,14 +65,98 @@ class GoogleEnum:
         for link in links:
             parsed=urlparse(link).netloc
             self.subdomains.append(parsed)
-        result = [i for n, i in enumerate(self.subdomains) if i not in self.subdomains[:n]] 
+            exception=['support.microsoft.com','go.microsoft.com','html.duckduckgo.com','google.com']
+        result = [i for n, i in enumerate(self.subdomains) if i not in self.subdomains[:n]]
+        if self.url!='microsoft.com' or self.url!='duckduckgo.com' or self.url!='google.com': 
+            try:
+                for data in exception:
+                    if data in result:
+                        result.remove(data)
+            except:
+                pass
+        self.subdomains=result.copy()
         return result
 
 
 
     def GetDomain(self):
-         print(self.GetUniqueDomains(self.scrape_google(self.url)))
+         return self.GetUniqueDomains(self.scrape_google(self.url))
     
+
+class BingEnum(GoogleEnum):
+    """
+    This class will make using of simple bing searches via bing dorks to enlist subdomains
+    """
+    
+    def __init__(self,url) -> None:
+        self.url=url
+        self.GetDomain()
+
+    def scrape_bing(self,query):
+        query = urllib.parse.quote_plus(query)
+        link=f'https://www.bing.com/search?q=site:{query}'
+        response = GoogleEnum.ReturnSourceCode(self,link)
+        links = list(response.html.absolute_links) ## getting all the links from search result
+        bing_domains = (
+                        
+                        'https://www.bing.com', 
+                        'https://bing.com', 
+                        'https://webcache.bing.com', 
+                        'http://webcache.bing.com', 
+                        'https://policies.bing.com',
+                        'https://support.bing.com',
+                        'https://maps.bing.com',
+                        'https://www.bing.com/maps'
+                      )
+
+        for url in links[:]:
+            if url.startswith(bing_domains): # removing links with bing_domains in it
+                links.remove(url)
+                #self.subdomains=links # adding these links to our one universal list for keeping domains
+        return links
+
+
+
+class DuckDuckGoEnum(GoogleEnum):
+    """
+    This class will make using of simple duckduckgo searches via duckduckgo dorks to enlist subdomains
+    """
+    def __init__(self,url) -> None:
+        self.url=url
+      #  self.GetDomain()
+        self.to_string()
+
+    def scrape_duckduckgo(self,query):
+        query = urllib.parse.quote_plus(query)
+        link=f'https://www.duckduckgo.com/html/?q=site:{query}'
+        response = GoogleEnum.ReturnSourceCode(self,link)
+        links = list(response.html.absolute_links) ## getting all the links from search result
+        duckduckgo_domains = (
+                        
+                        'https://www.duckduckgo.com', 
+                        'https://duckduckgo.com', 
+                        'https://webcache.duckduckgo.com', 
+                        'http://webcache.duckduckgo.com', 
+                        'https://policies.duckduckgo.com',
+                        'https://support.duckduckgo.com',
+                        'https://maps.duckduckgo.com',
+                        'https://www.duckduckgo.com/maps'
+                      )
+
+        for url in links[:]:
+            if url.startswith(duckduckgo_domains): # removing links with duckduckgo_domains in it
+                links.remove(url)
+                #self.subdomains=links # adding these links to our one universal list for keeping domains
+        return links
+
+    def GetDomain(self):
+         return GoogleEnum.GetUniqueDomains(self,self.scrape_duckduckgo(self.url)) 
+
+    
+    # function to convert list to string
+    def to_string(self):
+        print('\n'.join(self.GetDomain()))
+
 
 class Shodan:
     """
@@ -83,8 +164,12 @@ class Shodan:
     """
     api=shodan.Shodan(API_key)
 
-    def SearchDomains(self,url):
-        r=requests.get(f'https://api.shodan.io/dns/domain/{url}?key={API_key}')
+    def __init__(self,url) -> None:
+        self.url=url
+        self.SearchDomains()
+
+    def SearchDomains(self):
+        r=requests.get(f'https://api.shodan.io/dns/domain/{self.url}?key={API_key}')
         data=json.loads(r.text) ## reading json data from return in r.text
         ## load() and loads() for turning JSON encoded data into Python objects.
         print(data)
