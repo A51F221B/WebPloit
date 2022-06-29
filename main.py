@@ -30,8 +30,8 @@ class All():
 
 def main():
     c.print("[*] Enter a url : ")
-    url = "facebook.com"
-    All(url) # example is facebook.com, google.com 
+    url = "google.com"
+    All(url)        # example is facebook.com, google.com , Don't enter full url
     GoogleEnum(url)
     #Shodan(url)
     BingEnum(url)   # this will be used to get subdomains from bing

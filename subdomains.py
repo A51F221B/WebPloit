@@ -12,7 +12,10 @@ from requests_html import HTMLSession
 
 class GoogleEnum:
     """
-    This class will make using of simple google searches via google dorks to enlist subdomains
+    This class will make using of simple google searches via google dorks to enlist subdomains.What
+    actually is happening is that we are scarping links from different search engines and then removing
+    the paths from those links and adding unique domains to a list.
+    for example : https://au.edu.pk/results will be converted to au.edu.pk  
     """
     subdomains=[] 
 
@@ -60,14 +63,15 @@ class GoogleEnum:
                 #self.subdomains=links # adding these links to our one universal list for keeping domains
         return links
     
-
+    
+    # this function removes duplicate domains from the list and returns a list of unique domains
     def GetUniqueDomains(self,links):
         for link in links:
-            parsed=urlparse(link).netloc
-            self.subdomains.append(parsed)
-            exception=['support.microsoft.com','go.microsoft.com','html.duckduckgo.com','google.com']
+            parsed=urlparse(link).netloc # removing the path from the link
+            self.subdomains.append(parsed) # adding the domain to the list
+            exception=['support.microsoft.com','go.microsoft.com','google.com']
         result = [i for n, i in enumerate(self.subdomains) if i not in self.subdomains[:n]]
-        if self.url!='microsoft.com' or self.url!='duckduckgo.com' or self.url!='google.com': 
+        if self.url!='microsoft.com' or self.url!='google.com': 
             try:
                 for data in exception:
                     if data in result:
@@ -140,7 +144,8 @@ class DuckDuckGoEnum(GoogleEnum):
                         'https://policies.duckduckgo.com',
                         'https://support.duckduckgo.com',
                         'https://maps.duckduckgo.com',
-                        'https://www.duckduckgo.com/maps'
+                        'https://www.duckduckgo.com/maps',
+                        'https://html.duckduckgo.com'
                       )
 
         for url in links[:]:
