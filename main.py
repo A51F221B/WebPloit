@@ -30,7 +30,7 @@ class All():
 
 def main():
     c.print("[*] Enter a url : ")
-    url = "google.com"
+    url = "au.edu.pk"
     All(url)        # example is facebook.com, google.com , Don't enter full url
     GoogleEnum(url)
     #Shodan(url)

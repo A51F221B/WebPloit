@@ -8,13 +8,11 @@ session=HTMLSession()
 class Links:
     def __init__(self,url) -> None:
         self.url=url
-        self.FindLinksUsingBS()
 
     def FindLinksInPage(self): 
-        url="https://au.edu.pk"
-        response=session.get(url)
+        response=session.get(self.url)
         links = response.html.absolute_links
-        print(links)
+        return links
     
 
     def FindLinksUsingBS(self):
@@ -24,7 +22,6 @@ class Links:
              print(link.get('href'))
 
 
-Links("https://au.edu.pk")
 
 
     

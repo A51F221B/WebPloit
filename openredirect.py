@@ -1,21 +1,29 @@
 import requests
+from FindingAnchorTags import Links
 
 
+class OpenRedirect(Links):
+    def __init__(self, url):
+        super().__init__(url)
+        self.checklinks()
 
-class OpenRedirect:
-    
-    def __init__(self,url):
-        self.url=url
-        r=requests.get(url)
-    
-    def isRedirecting(self,url):
+    def isRedirecting(self):
+        r=requests.get(self.url)
         try:
-            if str(self.r.status_code).startswith('3'):
+            if str(r.status_code).startswith('3'):
                 return True
             else:
                 return False
         except:
             return False
+
+
+    def checklinks(self):
+        links=list(self.FindLinksInPage())
+        print(links)
+        # for link in links:
+        #     print(self.isRedirecting())
+
 
 
     def getRedirectedUrl(self):
@@ -24,6 +32,6 @@ class OpenRedirect:
         return False
 
 
+if __name__=='__main__':
+    rd=OpenRedirect('https://au.edu.pk')
 
-rd=OpenRedirect("https://au.edu.pk")
-print(rd.getRedirectedUrl())
