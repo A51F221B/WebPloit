@@ -1,6 +1,8 @@
+import gevent.monkey
+gevent.monkey.patch_all()
 import requests
 from FindingAnchorTags import Links
-
+import grequests
 
 class OpenRedirect(Links):
     def __init__(self, url):
@@ -21,6 +23,8 @@ class OpenRedirect(Links):
     def checklinks(self):
         links=list(self.FindLinksInPage())
         print(links)
+        # rs = (grequests.get(link) for link in links)
+        # print(grequests.map(rs))
         # for link in links:
         #     print(self.isRedirecting())
 
@@ -33,5 +37,7 @@ class OpenRedirect(Links):
 
 
 if __name__=='__main__':
-    rd=OpenRedirect('https://au.edu.pk')
+    rd=OpenRedirect('https://netflix.com')
+
+
 
