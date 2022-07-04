@@ -1,4 +1,3 @@
-from tkinter.messagebox import RETRY
 import gevent.monkey
 gevent.monkey.patch_all()
 import requests
@@ -10,7 +9,7 @@ class OpenRedirect(Links):
     redirects=[]
     def __init__(self, url):
         super().__init__(url)
-      #  self.checklinks()
+        self.checklinks()
       #  print(self.isRedirecting())
        
 
@@ -47,7 +46,11 @@ class OpenRedirect(Links):
         return redirectUrl
 
     # lisf of places where openredirects occur are login,create password,reset,checkout
-
+    # a method to inject payloads after parameters in the url
+    def injectpayload(self,url,payload):
+        url=url.split('?')
+        url=url[0]+'?'+payload+'&'+url[1]
+        return url
 
 
 if __name__=='__main__':
