@@ -1,4 +1,4 @@
-from subdomains import DuckDuckGoEnum, GoogleEnum,Shodan,BingEnum
+from subdomains import DuckDuckGoEnum, GoogleEnum,Shodan,BingEnum,Dictionary
 #import pyfiglet
 from rich import console
 from rich.console import group
@@ -29,12 +29,14 @@ class All():
 
 
 def main():
-    c.print("[*] Enter a url : ")
-    url = "nust.edu.pk"
-    All(url)        # example is facebook.com, google.com , Don't enter full url
+  #  c.print("[*] Enter a url : ")
+    url = "ustb.edu.pk"
+   # All(url)        # example is facebook.com, google.com , Don't enter full url
     GoogleEnum(url)
-    #Shodan(url)
+   # Shodan(url)
     BingEnum(url)   # this will be used to get subdomains from bing
     DuckDuckGoEnum(url)
+    #Dictionary(url)
+
 if __name__=='__main__':
     main()

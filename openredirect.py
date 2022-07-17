@@ -55,9 +55,9 @@ class OpenRedirect(Links):
 
 if __name__=='__main__':
     rd=OpenRedirect('https://fast.edu.pk/')
-  #  rd.redirects = ['https://www.google.com?next=', 'https://www.bing.com?url=test.com', 'https://www.yahoo.com?go=google.com', 'https://www.duckduckgo.com']
+    rd.redirects = ['https://www.google.com?next=', 'https://www.bing.com?url=test.com', 'https://www.yahoo.com?go=google.com', 'https://www.duckduckgo.com']
    # print(rd.isRedirecting('https://mcdonalds.com.pk//wp-admin/'))
-
+    print(rd.checkredirects())
 
 
 

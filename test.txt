@@ -1,3 +1,7 @@
+nbc
+rni
+nice
+lms
 portals
 test
 journals
