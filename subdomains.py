@@ -72,10 +72,8 @@ class GoogleEnum:
         for link in links:
             parsed = urlparse(link).netloc  # removing the path from the link
             self.subdomains.append(parsed)  # adding the domain to the list
-            exception = ['support.microsoft.com',
-                         'go.microsoft.com', 'google.com']
-        result = [i for n, i in enumerate(
-            self.subdomains) if i not in self.subdomains[:n]]
+            exception = ['support.microsoft.com','go.microsoft.com', 'google.com']
+        result = [i for n, i in enumerate(self.subdomains) if i not in self.subdomains[:n]]
         if self.url != 'microsoft.com' or self.url != 'google.com':
             try:
                 for data in exception:
@@ -197,14 +195,8 @@ class Dictionary:
 
     def __init__(self, url) -> None:
         self.url = url
-        # print(self.FindDomain())
         self.BruteForce()
 
-    def FindDomain(self):
-        file = open('test.txt', 'r')
-        content = file.read()
-        subdomains = content.splitlines()
-        return subdomains
 
     def read_file(self, path='./wordlist.txt'):
         # Opening file
@@ -214,44 +206,25 @@ class Dictionary:
             data.append(line.replace('\n', ""))
         # Closing files
         file.close()
+        return data  # returns a list of subdomains from text file
 
-        return data
 
     def req(self, subdomain):
         import urllib3
         http = urllib3.PoolManager()
-       # print(subdomain)
-        return subdomain
-        # try:
-        #     response = http.request("GET", f'https://{subdomain}.{self.url}',timeout=4)
-        #     if response.status == 200:
-        #         print(f'{subdomain}.{self.url}')
-        # except:
-        #     try:
-        #         response = http.request("GET", f'http://{subdomain}.{self.url}',timeout=4)
-        #     except:
-        #         pass
+        try:
+                r = http.request('GET', f'http://{subdomain}.{self.url}')
+                if r.status == 200:
+                    print(f'{subdomain}.{self.url}')
+                else:
+                    pass
+        except:
+                pass
+
 
     def BruteForce(self):
         results = []
-        with ThreadPoolExecutor() as executor:
-            results = executor.map(self.req, self.read_file())
-            for result in results:
-                r=requests.get(f'https://{result}.{self.url}')
-                if r.status_code==200:
-                    print(f'{result}.{self.url}')
-                else:
-                    pass
+        with ThreadPoolExecutor(100) as executor:
+            result=executor.map(self.req, self.read_file())
+            print(result)
 
-        # import urllib3
-        # http = urllib3.PoolManager()
-        # for subdomain in self.FindDomain():
-        #     try:
-        #         response = http.request("GET", f'https://{subdomain}.{self.url}',timeout=4)
-        #         if response.status == 200:
-        #             print(f'{subdomain}.{self.url}')
-        #     except:
-        #         try:
-        #             response = http.request("GET", f'http://{subdomain}.{self.url}',timeout=4)
-        #         except:
-        #             pass
