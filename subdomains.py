@@ -1,4 +1,3 @@
-from click import style
 import requests
 from config import API_key
 import shodan
@@ -6,9 +5,7 @@ import json
 import urllib
 from urllib.parse import urlparse
 from requests_html import HTMLSession
-from rich import console,status
-from rich.console import group
-from rich.panel import Panel
+from rich import console
 from threading import Thread, Lock
 from queue import Queue
 
