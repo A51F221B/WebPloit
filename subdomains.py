@@ -1,16 +1,16 @@
-from queue import Queue
-from socket import timeout
-from urllib import response
+from click import style
 import requests
 from config import API_key
-from threading import Thread
 import shodan
 import json
 import urllib
 from urllib.parse import urlparse
-from requests_html import HTML
 from requests_html import HTMLSession
-from concurrent.futures import ThreadPoolExecutor
+from rich import console,status
+from rich.console import group
+from rich.panel import Panel
+from threading import Thread, Lock
+from queue import Queue
 
 
 class GoogleEnum:
@@ -188,43 +188,81 @@ class Shodan:
                 print(item['subdomain']+"."+self.url)
 
 
+
 class Dictionary:
     """
-    This takes a simple bruteforce approach towards subdomains finding by simply providing a input file
+    This class uses a wordlist of subdomains and checks if the subdomains are available or not
+    Threading is being used in this class
     """
+    c=console.Console()
 
-    def __init__(self, url) -> None:
+    def __init__(self, url):
         self.url = url
-        self.BruteForce()
+        self.q = Queue()
+        self.found = Queue()
+        self.thread_Lock = Lock()
+        self.init()
+
+    #method to return list from text file
+    def wordlist(self, path : str = "./wordlist.txt"):
+        with open(path, "r") as file:
+            data = []
+            for line in file:
+                data.append(line.replace("\n", ""))
+        return data
 
 
-    def read_file(self, path='./wordlist.txt'):
-        # Opening file
-        file = open(path, 'r')
-        data = []
-        for line in file:
-            data.append(line.replace('\n', ""))
-        # Closing files
-        file.close()
-        return data  # returns a list of subdomains from text file
-
-
-    def req(self, subdomain):
+    def scan(self, subdomain):
         import urllib3
         http = urllib3.PoolManager()
         try:
-                r = http.request('GET', f'http://{subdomain}.{self.url}')
-                if r.status == 200:
-                    print(f'{subdomain}.{self.url}')
-                else:
-                    pass
-        except:
-                pass
+            r = http.request(
+                'GET',
+                f'https://{subdomain}.{self.url}',
+                redirect=True,
+                timeout=3
+            )
+
+            if r.status == 200: 
+                with self.thread_Lock:
+                    self.c.print(f'[+] {subdomain}.{self.url}',style="bold green")
+                    self.found.append(subdomain)
+            elif r.status == 503:
+                with self.thread_Lock:
+                    self.c.print(f'[-] {subdomain}.{self.url} ',style="bold green")
+            else:
+                with self.thread_Lock:
+                    self.c.print(f'[-] {subdomain}.{self.url}',style="bold red")
+        except Exception as e:
+         #   print(f"Error occurred: {e}")
+            pass
 
 
-    def BruteForce(self):
-        results = []
-        with ThreadPoolExecutor(100) as executor:
-            result=executor.map(self.req, self.read_file())
-            print(result)
+    def extract(self):
+        while True:
+            try:
+                subdomain = self.q.get()
+                self.scan(subdomain)
+                self.q.task_done()
+            except KeyboardInterrupt:
+                exit(1)
+            except Exception as E:
+                print("Error occurred: {}".format(E))
 
+    def init(self,threads=200):
+        subdomain=self.wordlist()
+        try:
+            for thread in range(threads):
+                thread = Thread(target=self.extract)
+                thread.daemon = True
+                thread.start()
+            for subdomain in subdomain:
+                self.q.put(subdomain)
+
+            self.q.join()
+
+        except KeyboardInterrupt:
+            print("CTRL+C detected!")
+
+
+Dictionary('nust.edu.pk')

@@ -7,4 +7,11 @@ test
 journals
 smpt
 google
+account
+movies
+au
+fast
+nust
+usbt 
+comsats 
 
