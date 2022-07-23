@@ -24,7 +24,8 @@ class GoogleEnum:
         self.GetDomain()
 
     def ReturnSourceCode(self, query):
-        """Return the source code for the provided URL. 
+        """
+        Return the source code for the provided URL. 
 
         Args: 
             url (string): URL of the page to scrape.
