@@ -70,8 +70,10 @@ class GoogleEnum:
         for link in links:
             parsed = urlparse(link).netloc  # removing the path from the link
             self.subdomains.append(parsed)  # adding the domain to the list
-            exception = ['support.microsoft.com','go.microsoft.com', 'google.com']
-        result = [i for n, i in enumerate(self.subdomains) if i not in self.subdomains[:n]]
+            exception = ['support.microsoft.com',
+                         'go.microsoft.com', 'google.com']
+        result = [i for n, i in enumerate(
+            self.subdomains) if i not in self.subdomains[:n]]
         if self.url != 'microsoft.com' or self.url != 'google.com':
             try:
                 for data in exception:
@@ -170,21 +172,25 @@ class Shodan:
     This class is using Shodan Search engine via a shodan API to enlist subdomains
     """
     api = shodan.Shodan(API_key)
+    subdomains = []
 
     def __init__(self, url) -> None:
         self.url = url
         self.SearchDomains()
 
     def SearchDomains(self):
-        r = requests.get(
-            f'https://api.shodan.io/dns/domain/{self.url}?key={API_key}')
-        data = json.loads(r.text)  # reading json data from return in r.text
-        # load() and loads() for turning JSON encoded data into Python objects.
-       # print(data)
-        for item in data['data']:
-            if item["subdomain"]!="":
-                print(item['subdomain']+"."+self.url)
-
+        try:
+            r = requests.get(
+                f'https://api.shodan.io/dns/domain/{self.url}?key={API_key}')
+            data = json.loads(r.text)  # reading json data from return in r.text
+            # load() and loads() for turning JSON encoded data into Python objects.
+        # print(data)
+            for item in data['data']:
+                if item["subdomain"] != "":
+                    print(item['subdomain']+"."+self.url)
+                    self.subdomains.append(item['subdomain']+"."+self.url)
+        except:
+            pass
 
 
 class Dictionary:
@@ -192,7 +198,7 @@ class Dictionary:
     This class uses a wordlist of subdomains and checks if the subdomains are available or not
     Threading is being used in this class
     """
-    c=console.Console()
+    c = console.Console()
 
     def __init__(self, url):
         self.url = url
@@ -201,14 +207,13 @@ class Dictionary:
         self.thread_Lock = Lock()
         self.init()
 
-    #method to return list from text file
-    def wordlist(self, path : str = "./wordlist.txt"):
+    # method to return list from text file
+    def wordlist(self, path: str = "./wordlist.txt"):
         with open(path, "r") as file:
             data = []
             for line in file:
                 data.append(line.replace("\n", ""))
         return data
-
 
     def scan(self, subdomain):
         import urllib3
@@ -221,20 +226,22 @@ class Dictionary:
                 timeout=3
             )
 
-            if r.status == 200: 
+            if r.status == 200:
                 with self.thread_Lock:
-                    self.c.print(f'[+] {subdomain}.{self.url}',style="bold green")
+                    self.c.print(
+                        f'[+] {subdomain}.{self.url}', style="bold green")
                     self.found.append(subdomain)
             elif r.status == 503:
                 with self.thread_Lock:
-                    self.c.print(f'[-] {subdomain}.{self.url} ',style="bold green")
+                    self.c.print(
+                        f'[-] {subdomain}.{self.url} ', style="bold green")
             else:
                 with self.thread_Lock:
-                    self.c.print(f'[-] {subdomain}.{self.url}',style="bold red")
+                    self.c.print(
+                        f'[-] {subdomain}.{self.url}', style="bold red")
         except Exception as e:
          #   print(f"Error occurred: {e}")
             pass
-
 
     def extract(self):
         while True:
@@ -247,8 +254,8 @@ class Dictionary:
             except Exception as E:
                 print("Error occurred: {}".format(E))
 
-    def init(self,threads=200):
-        subdomain=self.wordlist()
+    def init(self, threads=100):
+        subdomain = self.wordlist()
         try:
             for thread in range(threads):
                 thread = Thread(target=self.extract)
@@ -263,4 +270,30 @@ class Dictionary:
             print("CTRL+C detected!")
 
 
-Dictionary('nust.edu.pk')
+# Dictionary('nust.edu.pk')
+
+class Subdomains(DuckDuckGoEnum):
+    """
+    This class will call functions from other classes to get unique subdomains
+    """
+    subdomains = []
+    def __init__(self, url, aggressive=False):
+        self.url = url
+        self.aggressive = aggressive
+        self.GetSubdomains(aggressive)
+
+    def GetSubdomains(self,aggressive):
+        self.subdomains=DuckDuckGoEnum.GetDomain(self)
+       # Shodan(self.url)
+        if self.aggressive:
+            try:
+                Shodan(self.url)
+                Dictionary(self.url)
+            except:
+                pass
+        GoogleEnum(self.url)
+        BingEnum(self.url)
+        DuckDuckGoEnum(self.url)
+
+
+Subdomains('nust.edu.pk', aggressive=True)
