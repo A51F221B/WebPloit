@@ -1,5 +1,4 @@
 import requests
-from config import API_key
 import shodan
 import json
 import urllib
@@ -56,7 +55,8 @@ class GoogleEnum:
                           'http://webcache.googleusercontent.',
                           'https://policies.google.',
                           'https://support.google.',
-                          'https://maps.google.')
+                          'https://maps.google.',
+                          'https://translate.google.com')
 
         for url in links[:]:
             # removing links with google_domains in it
@@ -168,6 +168,7 @@ class DuckDuckGoEnum(GoogleEnum):
 
 
 class Shodan:
+    from config import API_key
     """
     This class is using Shodan Search engine via a shodan API to enlist subdomains
     """
@@ -276,14 +277,15 @@ class Subdomains(DuckDuckGoEnum):
     """
     This class will call functions from other classes to get unique subdomains
     """
-    subdomains = []
+    
+    #subdomains = []
+    
     def __init__(self, url, aggressive=False):
         self.url = url
         self.aggressive = aggressive
         self.GetSubdomains(aggressive)
 
     def GetSubdomains(self,aggressive):
-        self.subdomains=DuckDuckGoEnum.GetDomain(self)
        # Shodan(self.url)
         if self.aggressive:
             try:
@@ -294,6 +296,9 @@ class Subdomains(DuckDuckGoEnum):
         GoogleEnum(self.url)
         BingEnum(self.url)
         DuckDuckGoEnum(self.url)
+        self.subdomains=DuckDuckGoEnum.GetDomain(self).copy()
+        print(self.subdomains)
 
 
-Subdomains('nust.edu.pk', aggressive=True)
+#Subdomains('netflix.com',aggressive=False)
+#print(type(DuckDuckGoEnum.GetDomain()))
