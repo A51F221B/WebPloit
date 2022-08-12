@@ -168,13 +168,15 @@ class DuckDuckGoEnum(GoogleEnum):
 
 
 class Shodan:
-
-    from API.config import API_key
-
     """
     This class is using Shodan Search engine via a shodan API to enlist subdomains
     """
-    api = shodan.Shodan(API_key)
+    try:
+        from API.config import API_key
+        api = shodan.Shodan(API_key)
+    except:
+        pass
+    
     subdomains = []
 
     def __init__(self, url) -> None:
@@ -212,7 +214,7 @@ class Dictionary:
         self.init()
 
     # method to return list from text file
-    def wordlist(self, path: str = "/subdomain/wordlist.txt"):
+    def wordlist(self, path: str = "wordlist/wordlist.txt"):
         with open(path, "r") as file:
             data = []
             for line in file:
@@ -294,8 +296,8 @@ class Subdomains(DuckDuckGoEnum):
             try:
                 Shodan(self.url)
                 Dictionary(self.url)
-            except:
-                pass
+            except Exception as e:
+                print(e)
         GoogleEnum(self.url)
         BingEnum(self.url)
         DuckDuckGoEnum(self.url)
@@ -303,5 +305,5 @@ class Subdomains(DuckDuckGoEnum):
         print(self.subdomains)
 
 
-Subdomains('netflix.com', aggressive=False)
+Subdomains('netflix.com', aggressive=True)
 # print(type(DuckDuckGoEnum.GetDomain()))

@@ -81,7 +81,7 @@ class OpenSubs():
         
 
 
-    def wordlist(self, path: str = "/wordlist/openredirect.txt"):
+    def wordlist(self, path: str = "wordlist/openredirect.txt"):
         with open(path, "r") as file:
             data = []
             for line in file:
