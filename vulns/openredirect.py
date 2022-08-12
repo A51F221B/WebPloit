@@ -3,6 +3,9 @@ gevent.monkey.patch_all()
 import requests
 from FindingAnchorTags import Links
 import grequests
+from subdomains import Subdomains
+
+
 
 class OpenRedirect(Links):
     
@@ -67,8 +70,6 @@ if __name__=='__main__':
 #http://s.adroll.com/j/exp/ERYIVUAW3VAMTPY6WYTWZX/index.js
 
 
-from subdomains import Subdomains
-import requests
 
 class OpenSubs():
    
@@ -80,7 +81,7 @@ class OpenSubs():
         
 
 
-    def wordlist(self, path: str = "./openredirect.txt"):
+    def wordlist(self, path: str = "/wordlist/openredirect.txt"):
         with open(path, "r") as file:
             data = []
             for line in file:
@@ -112,3 +113,5 @@ class OpenSubs():
         url=list(set(self.makepayload()))
         for u in url:
             print(self.checkredirect(u))
+
+

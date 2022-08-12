@@ -168,7 +168,9 @@ class DuckDuckGoEnum(GoogleEnum):
 
 
 class Shodan:
-    from config import API_key
+
+    from API.config import API_key
+
     """
     This class is using Shodan Search engine via a shodan API to enlist subdomains
     """
@@ -183,7 +185,8 @@ class Shodan:
         try:
             r = requests.get(
                 f'https://api.shodan.io/dns/domain/{self.url}?key={API_key}')
-            data = json.loads(r.text)  # reading json data from return in r.text
+            # reading json data from return in r.text
+            data = json.loads(r.text)
             # load() and loads() for turning JSON encoded data into Python objects.
         # print(data)
             for item in data['data']:
@@ -209,7 +212,7 @@ class Dictionary:
         self.init()
 
     # method to return list from text file
-    def wordlist(self, path: str = "./wordlist.txt"):
+    def wordlist(self, path: str = "/subdomain/wordlist.txt"):
         with open(path, "r") as file:
             data = []
             for line in file:
@@ -277,15 +280,15 @@ class Subdomains(DuckDuckGoEnum):
     """
     This class will call functions from other classes to get unique subdomains
     """
-    
+
     #subdomains = []
-    
+
     def __init__(self, url, aggressive=False):
         self.url = url
         self.aggressive = aggressive
         self.GetSubdomains(aggressive)
 
-    def GetSubdomains(self,aggressive):
+    def GetSubdomains(self, aggressive):
        # Shodan(self.url)
         if self.aggressive:
             try:
@@ -296,9 +299,9 @@ class Subdomains(DuckDuckGoEnum):
         GoogleEnum(self.url)
         BingEnum(self.url)
         DuckDuckGoEnum(self.url)
-        self.subdomains=DuckDuckGoEnum.GetDomain(self).copy()
+        self.subdomains = DuckDuckGoEnum.GetDomain(self).copy()
         print(self.subdomains)
 
 
-#Subdomains('netflix.com',aggressive=False)
-#print(type(DuckDuckGoEnum.GetDomain()))
+Subdomains('netflix.com', aggressive=False)
+# print(type(DuckDuckGoEnum.GetDomain()))
