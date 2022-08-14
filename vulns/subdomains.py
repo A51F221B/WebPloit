@@ -187,7 +187,7 @@ class Shodan:
                 f'https://api.shodan.io/dns/domain/{self.url}?key={API_key}')
             data = json.loads(r.text)
          #   print(json.dumps(data, indent=2))
-            with open('Found_Subdomains.txt', 'a') as f:
+            with open('Found_Subdomains.json', 'a') as f:
                 f.write(json.dumps(data, indent=2))
                 for subdomain in data['subdomains']:
                     self.subdomains.append(subdomain+'.'+self.url)
@@ -305,5 +305,5 @@ class Subdomains(DuckDuckGoEnum):
         print(self.subdomains)
 
 
-#Subdomains('facebook.com', aggressive=False)
+Subdomains('facebook.com', aggressive=True)
 # print(type(DuckDuckGoEnum.GetDomain()))
