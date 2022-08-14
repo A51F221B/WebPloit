@@ -8,3 +8,4 @@ ticket.csv
 vulns/API/config.py
 vulns/API/
 vulns/wordlist/Found_Subdomains.txt
+Found_Subdomains.txt
