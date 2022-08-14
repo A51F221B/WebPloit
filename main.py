@@ -1,4 +1,4 @@
-from subdomains import DuckDuckGoEnum, GoogleEnum,Shodan,BingEnum,Dictionary
+from vulns.openredirect import OpenRedirect
 #import pyfiglet
 from rich import console
 from rich.console import group
@@ -29,14 +29,8 @@ class All():
 
 
 def main():
-  #  c.print("[*] Enter a url : ")
-    url = "netflix.com"
-   # All(url)        # example is facebook.com, google.com , Don't enter full url
-    #GoogleEnum(url)
-   # Shodan(url)
-    #BingEnum(url)   # this will be used to get subdomains from bing
-    #DuckDuckGoEnum(url)
-    Dictionary(url)
+  url='https://www.google.com'
+  OpenRedirect(url)
 
 if __name__=='__main__':
     main()

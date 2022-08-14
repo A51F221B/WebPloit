@@ -172,31 +172,31 @@ class Shodan:
     """
     This class is using Shodan Search engine via a shodan API to enlist subdomains
     """
-#    try:
     api = shodan.Shodan(API_key)
-    # except Exception as e:
-    #     print(e)
     
     subdomains = []
 
     def __init__(self, url) -> None:
         self.url = url
         self.SearchDomains()
+        print(self.listtoString())
 
     def SearchDomains(self):
         try:
             r = requests.get(
                 f'https://api.shodan.io/dns/domain/{self.url}?key={API_key}')
-            # reading json data from return in r.text
             data = json.loads(r.text)
-            # load() and loads() for turning JSON encoded data into Python objects.
-        # print(data)
-            for item in data['data']:
-                if item["subdomain"] != "":
-                    print(item['subdomain']+"."+self.url)
-                    self.subdomains.append(item['subdomain']+"."+self.url)
+         #   print(json.dumps(data, indent=2))
+            with open('Found_Subdomains.txt', 'a') as f:
+                f.write(json.dumps(data, indent=2))
+                for subdomain in data['subdomains']:
+                    self.subdomains.append(subdomain+'.'+self.url)
+                return self.subdomains
         except Exception as e:
             print(e)
+
+    def listtoString(self):
+        return '\n'.join(self.subdomains)
 
 
 class Dictionary:
@@ -305,5 +305,5 @@ class Subdomains(DuckDuckGoEnum):
         print(self.subdomains)
 
 
-Subdomains('netflix.com', aggressive=True)
+#Subdomains('facebook.com', aggressive=True)
 # print(type(DuckDuckGoEnum.GetDomain()))
