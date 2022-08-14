@@ -305,5 +305,5 @@ class Subdomains(DuckDuckGoEnum):
         print(self.subdomains)
 
 
-#Subdomains('facebook.com', aggressive=True)
+#Subdomains('facebook.com', aggressive=False)
 # print(type(DuckDuckGoEnum.GetDomain()))

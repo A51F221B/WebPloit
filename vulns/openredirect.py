@@ -103,9 +103,9 @@ class OpenSubs():
         try:
             r=requests.get(u,allow_redirects=True)
             if str(r.status_code).startswith('3'):
-                return r.status_code
+                return u
             else:
-                return r.status_code
+                return u
         except:
             return False
     
@@ -115,3 +115,4 @@ class OpenSubs():
             print(self.checkredirect(u))
 
 
+OpenSubs('fast.edu.pk')
