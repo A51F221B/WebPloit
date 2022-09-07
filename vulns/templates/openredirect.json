@@ -1,0 +1,36 @@
+{
+    "id": "Open Redirect",
+    "url" : "",
+    "request": {
+        "path": "/",
+        "method": "GET",
+        "redirects": false,
+        "payloads": false,
+        "headers": {
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0"
+        }
+    },
+    "stopAtMatch": true,
+    "matches": [
+        {
+            "type": "regex",
+            "part": "header",
+            "lookAt" : "response",
+            "key": "Location",
+            "regex": "(?m)^(?:Location\\s*?:\\s*?)(?:https?:\/\/|\/\/|\/\\\\|\/\\)?(?:[a-zA-Z0-9\\-_\\.@]*)interact\\.sh\/?(\/|[^.].*)?$"
+        },
+        {
+            "type": "status",
+            "status": [301, 302, 303, 307, 308],
+            "condition": "or"
+        },
+        {
+            "type": "body",
+            "status": [301],
+            "condition": "and"
+        }
+    ],
+    "payloads": ["%0a/interact.sh/","%0d/interact.sh/","%00/interact.sh/","%09/interact.sh/",
+    "%5C%5Cinteract.sh/%252e%252e%252f"]
+    
+}

@@ -305,5 +305,5 @@ class Subdomains(DuckDuckGoEnum):
         print(self.subdomains)
 
 
-Subdomains('facebook.com', aggressive=True)
+Subdomains('flourish.studio', aggressive=True)
 # print(type(DuckDuckGoEnum.GetDomain()))
