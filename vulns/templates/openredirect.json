@@ -16,8 +16,8 @@
             "type": "regex",
             "part": "header",
             "lookAt" : "response",
-            "key": "Location",
-            "regex": "(?m)^(?:Location\\s*?:\\s*?)(?:https?:\/\/|\/\/|\/\\\\|\/\\)?(?:[a-zA-Z0-9\\-_\\.@]*)interact\\.sh\/?(\/|[^.].*)?$"
+            "key": "Server",
+            "regex": "(?m)^(?:Location\\s*?:\\s*?)(?:https?:\\/\\/|\\/\\/|\\/\\\\\\\\|\\/\\\\)?(?:[a-zA-Z0-9\\-_\\.@]*)interact\\.sh\\/?(\\/|[^.].*)?$"
         },
         {
             "type": "status",

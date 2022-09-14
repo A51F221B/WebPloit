@@ -8,9 +8,6 @@ from threading import Thread,Lock
 
 
 class Fuzzer:
-    """
-    Only God knows how this code works
-    """
 
 
     def __init__(self,url):
@@ -93,9 +90,9 @@ class Engine(Fuzzer):
 
     def request(self):
         if data['request']['payloads']==True:
-            self.req()
-        elif data['request']['payloads']==False:
             f=Fuzzer(self.url)
+        elif data['request']['payloads']==False:
+            self.req()
 
 
     def req(self):
@@ -113,6 +110,7 @@ class Engine(Fuzzer):
         status=r.status
         print(status)
         responseheaders=r.headers
+       # print(responseheaders)
         flag=False 
         #try:
         for matcher in data['matches']:
@@ -121,14 +119,19 @@ class Engine(Fuzzer):
                     if status==code:
                         flag=True
     
-                
         
-        if matcher['type']=='body':
-            print(matcher['type'])
+            if matcher['type']=='body':
+                print("This is the body part")
+                    
+            if matcher['type']=='regex':
+                print(data['id'])
+                if matcher['part']=='header':
+                    if matcher['key'] in responseheaders:
+                        head=f'{matcher["key"]}: {responseheaders[matcher["key"]]}'
+                        print(head)
+                        reg=r"(?m)^(?:Server\s*?:\s*?)(?:https?:\/\/|\/\/|\/\\\\|\/\\)?(?:[a-zA-Z0-9\-_\.@]*)cloudflare\/?(\/|[^.].*)?$"
+                        print(self.regex_match(reg,head))
         
-        if matcher['type']=='regex':
-            if matcher['part']=='header':
-                pass
         # except:
         #     pass    
 
@@ -136,6 +139,13 @@ class Engine(Fuzzer):
 
     def status(self):
         pass
+
+    def regex_match(self,regex, string):
+        matches = re.finditer(regex, string, re.MULTILINE | re.IGNORECASE)
+        for match in matches:
+            return True
+        return False
+
 
 
 
