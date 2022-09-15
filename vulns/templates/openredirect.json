@@ -5,7 +5,7 @@
         "path": "/",
         "method": "GET",
         "redirects": false,
-        "payloads": true,
+        "payloads": false,
         "headers": {
             "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0"
         }
@@ -17,7 +17,7 @@
             "type": "regex",
             "part": "header",
             "lookAt" : "response",
-            "key": "Server",
+            "key": "Location",
             "regex": "(?m)^(?:Location\\s*?:\\s*?)(?:https?:\\/\\/|\\/\\/|\\/\\\\\\\\|\\/\\\\)?(?:[a-zA-Z0-9\\-_\\.@]*)interact\\.sh\\/?(\\/|[^.].*)?$"
         },
         {

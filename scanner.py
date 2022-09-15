@@ -58,8 +58,9 @@ class Fuzzer:
                 if matcher['part']=='header':
                     if matcher['key'] in responseheaders:
                         head=f'{matcher["key"]}: {responseheaders[matcher["key"]]}'
-                        #print(head)
-                        reg=r"(?m)^(?:Server\s*?:\s*?)(?:https?:\/\/|\/\/|\/\\\\|\/\\)?(?:[a-zA-Z0-9\-_\.@]*)cloudflare\/?(\/|[^.].*)?$"
+                        print(head)
+                        #reg=r"(?m)^(?:Server\s*?:\s*?)(?:https?:\/\/|\/\/|\/\\\\|\/\\)?(?:[a-zA-Z0-9\-_\.@]*)cloudflare\/?(\/|[^.].*)?$"
+                        reg=r"(?m)^(?:Location\s*?:\s*?)(?:https?:\/\/|\/\/|\/\\\\|\/\\)?(?:[a-zA-Z0-9\-_\.@]*)example\.com\/?(\/|[^.].*)?$"
                         regmatch=Engine.regex_match(self,reg,head)
                         print(f"Pattern found : {regmatch}")
         self.matchersCondition(flag,regmatch)
@@ -172,8 +173,9 @@ class Engine(Fuzzer):
     
 
 #fuff=Fuzzer('http://au.edu.pk','vulns/templates/openredirect.json')
-engine=Engine('https://au.edu.pk','vulns/templates/openredirect.json')
+engine=Engine('https://ptl-b00d72f4-cf435e49.libcurl.so/redirect.php?uri=https://example.com','vulns/templates/openredirect.json')
 
     
 
-    
+
+# https://ptl-b00d72f4-cf435e49.libcurl.so/redirect.php?uri=https://example.com
