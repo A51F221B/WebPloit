@@ -47,7 +47,7 @@ class Fuzzer:
                 for code in matcher['status']:
                     if status==code:
                         flag=True
-                        print("Status Code Found")
+                        print(f"Status Code : {flag}")
     
         
             if matcher['type']=='body':
@@ -60,7 +60,24 @@ class Fuzzer:
                         head=f'{matcher["key"]}: {responseheaders[matcher["key"]]}'
                         #print(head)
                         reg=r"(?m)^(?:Server\s*?:\s*?)(?:https?:\/\/|\/\/|\/\\\\|\/\\)?(?:[a-zA-Z0-9\-_\.@]*)cloudflare\/?(\/|[^.].*)?$"
-                        print(f"Pattern found : {Engine.regex_match(self,reg,head)}")
+                        regmatch=Engine.regex_match(self,reg,head)
+                        print(f"Pattern found : {regmatch}")
+        self.matchersCondition(flag,regmatch)
+
+
+
+    def matchersCondition(self,flag,regmatch):
+        if data['matchers-condition'] == 'and':
+            if flag and regmatch:
+                print("Vulnerability Found")
+                return True
+            else:
+                print("Vulnerability not found")
+                return False
+        elif data['matchers-condition'] == 'or':
+            if flag or regmatch:
+                print("Vulnerability Found")
+                return True
 
 
 
@@ -155,7 +172,7 @@ class Engine(Fuzzer):
     
 
 #fuff=Fuzzer('http://au.edu.pk','vulns/templates/openredirect.json')
-engine=Engine('https://netflix.com','vulns/templates/openredirect.json')
+engine=Engine('https://au.edu.pk','vulns/templates/openredirect.json')
 
     
 
