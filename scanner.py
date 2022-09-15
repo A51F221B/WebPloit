@@ -22,18 +22,45 @@ class Fuzzer:
 
 
     def scan(self, payload):
-        global responseheaders,rstatus
+        global responseheaders,status
         http=urllib3.PoolManager()
+        url=f'{self.url}/{payload}',
         r=http.request(
             data['request']['method'],
-            url=self.url,
+            url=f'{self.url}/{payload}',
             headers=data['request']['headers'],
             redirect=data['request']['redirects']
         )
-        url=f'{self.url}/{payload}',
         print(f'{url} {r.status}')
         responseheaders=r.headers
-        rstatus=r.status
+        #print(responseheaders)
+        status=r.status
+        self.checkers()
+        
+
+
+    def checkers(self):
+        flag=False 
+        #try:
+        for matcher in data['matches']:
+            if matcher['type']=='status':
+                for code in matcher['status']:
+                    if status==code:
+                        flag=True
+                        print("Status Code Found")
+    
+        
+            if matcher['type']=='body':
+                pass
+                    
+            if matcher['type']=='regex':
+               # print(data['id'])
+                if matcher['part']=='header':
+                    if matcher['key'] in responseheaders:
+                        head=f'{matcher["key"]}: {responseheaders[matcher["key"]]}'
+                        #print(head)
+                        reg=r"(?m)^(?:Server\s*?:\s*?)(?:https?:\/\/|\/\/|\/\\\\|\/\\)?(?:[a-zA-Z0-9\-_\.@]*)cloudflare\/?(\/|[^.].*)?$"
+                        print(f"Pattern found : {Engine.regex_match(self,reg,head)}")
 
 
 
@@ -110,32 +137,8 @@ class Engine(Fuzzer):
         status=r.status
         print(status)
         responseheaders=r.headers
-       # print(responseheaders)
-        flag=False 
-        #try:
-        for matcher in data['matches']:
-            if matcher['type']=='status':
-                for code in matcher['status']:
-                    if status==code:
-                        flag=True
-    
-        
-            if matcher['type']=='body':
-                print("This is the body part")
-                    
-            if matcher['type']=='regex':
-                print(data['id'])
-                if matcher['part']=='header':
-                    if matcher['key'] in responseheaders:
-                        head=f'{matcher["key"]}: {responseheaders[matcher["key"]]}'
-                        print(head)
-                        reg=r"(?m)^(?:Server\s*?:\s*?)(?:https?:\/\/|\/\/|\/\\\\|\/\\)?(?:[a-zA-Z0-9\-_\.@]*)cloudflare\/?(\/|[^.].*)?$"
-                        print(self.regex_match(reg,head))
-        
-        # except:
-        #     pass    
-
-
+        self.checkers()
+ 
 
     def status(self):
         pass
@@ -152,7 +155,7 @@ class Engine(Fuzzer):
     
 
 #fuff=Fuzzer('http://au.edu.pk','vulns/templates/openredirect.json')
-engine=Engine('https://au.edu.pk','vulns/templates/openredirect.json')
+engine=Engine('https://netflix.com','vulns/templates/openredirect.json')
 
     
 
