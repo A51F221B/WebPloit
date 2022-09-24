@@ -24,11 +24,6 @@
             "type": "status",
             "status": [301, 302, 303, 307, 308],
             "condition": "or"
-        },
-        {
-            "type": "body",
-            "status": [301],
-            "condition": "and"
         }
     ],
     "payloads": ["%0a/interact.sh/","%0d/interact.sh/","%00/interact.sh/","%09/interact.sh/",

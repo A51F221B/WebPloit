@@ -1,0 +1,20 @@
+{
+    "id": "xxe",
+    "url":"",
+    "severity": "high",
+    "request":{
+        "path":"/",
+        "method": "POST",
+        "payloads":false,
+        "redirects": "",
+        "headers": {
+            "Content-Type": "text/xml",
+            "Accept": "*/*",
+            "User-Agent" : "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0",
+            "Host":"0a8500b80342dbe7c064220400ac0080.web-security-academy.net"
+           
+        },
+        "body": "<stockCheck><productId>17</productId><storeId>1</storeId></stockCheck>"
+    }
+
+}

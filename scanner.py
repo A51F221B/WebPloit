@@ -143,23 +143,34 @@ class Engine(Fuzzer):
     def req(self):
         global status,responseheaders,flag
 
+        #body='''<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE test [ <!ENTITY xxe SYSTEM "file:///etc/passwd"> ]><stockCheck><productId>&xxe;</productId><storeId>1</storeId></stockCheck>'''
+        
         http=urllib3.PoolManager()
         print(f"payloads : {data['request']['payloads']}")
-        r=http.request(
-            data['request']['method'],
-            url=self.url,
-            headers=data['request']['headers'],
-            redirect=data['request']['redirects']
-        )
+        if data['request']['method']=='GET':
+                r=http.request(
+                data['request']['method'],
+                url=self.url,
+                headers=data['request']['headers'],
+                redirect=data['request']['redirects'],
+            )
+        
+
+        elif data['request']['method']=='POST':
+            r=http.request(
+                data['request']['method'],
+                url=self.url,
+                headers=data['request']['headers'],
+                body=data['request']['body']
+            )
       #  print(r.headers)
         status=r.status
         print(status)
         responseheaders=r.headers
-        self.checkers()
+        print(responseheaders)
+        print(r.data)
+       # self.checkers()
  
-
-    def status(self):
-        pass
 
     def regex_match(self,regex, string):
         matches = re.finditer(regex, string, re.MULTILINE | re.IGNORECASE)
@@ -173,9 +184,10 @@ class Engine(Fuzzer):
     
 
 #fuff=Fuzzer('http://au.edu.pk','vulns/templates/openredirect.json')
-engine=Engine('https://ptl-b00d72f4-cf435e49.libcurl.so/redirect.php?uri=https://example.com','vulns/templates/openredirect.json')
+engine=Engine('https://0a8500b80342dbe7c064220400ac0080.web-security-academy.net/product/stock','vulns/templates/xxe.json')
 
     
 
-
 # https://ptl-b00d72f4-cf435e49.libcurl.so/redirect.php?uri=https://example.com
+
+
