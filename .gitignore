@@ -7,8 +7,9 @@ threader.py
 ticket.csv
 vulns/API/config.py
 vulns/API/
-vulns/wordlist/Found_Subdomains.json
 Found_Subdomains.json
 vulns/wordlist/__pycache__/
 /__pycache__/
 dict.txt
+*.pyc
+

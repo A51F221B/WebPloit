@@ -102,7 +102,7 @@ class Fuzzer:
                 self.scan(payload)
                 self.q.task_done()
             except KeyboardInterrupt:
-                exit(1)
+                exit(1) 
             except Exception as E:
                 print("Error occurred: {}".format(E))
 
@@ -195,8 +195,8 @@ def start(url):
 
 
 # fuff=Fuzzer('http://au.edu.pk','vulns/templates/openredirect.json')
-engine = Engine('https://au.edu.pk/',
-                'vulns/blueprints/xxe.json').start()
+engine = Engine('http://ptl-3e83540a-71ed55c3.libcurl.so/redirect.php?uri=',
+                'blueprints/openredirect.json').start()
 
 
 # https://ptl-b00d72f4-cf435e49.libcurl.so/redirect.php?uri=https://example.com
