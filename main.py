@@ -1,4 +1,4 @@
-from vulns.openredirect import OpenRedirect
+from vulns.openredirect.ord import OpenRedirect
 #import pyfiglet
 from rich import console
 from rich.console import group

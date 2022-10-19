@@ -31,6 +31,8 @@ class Fuzzer:
         self.thread_Lock = Lock()
         self.init()
 
+  
+  
     def scan(self, payload):
         global responseheaders, status, responsebody
         http = urllib3.PoolManager()
@@ -48,6 +50,8 @@ class Fuzzer:
         status = r.status
         self.checkers()
 
+  
+    
     def checkers(self):
         flag = False
         # try:
@@ -82,6 +86,9 @@ class Fuzzer:
 
         self.matchersCondition(flag, regmatch)
 
+
+
+
     def matchersCondition(self, flag, regmatch):
         if data['matchers-condition'] == 'and':
             if flag and regmatch:
@@ -95,6 +102,9 @@ class Fuzzer:
                 print("Vulnerability Found")
                 return True
 
+
+
+  
     def extract(self):
         while True:
             try:
@@ -106,12 +116,16 @@ class Fuzzer:
             except Exception as E:
                 print("Error occurred: {}".format(E))
 
+  
+  
     def readFile(self):
         global data
         with open(self.file) as json_file:
             data = json.loads(json_file.read())
             return data
 
+  
+  
     def init(self, threads=100):
         try:
             for thread in range(threads):
@@ -127,6 +141,9 @@ class Fuzzer:
             print("CTRL+C detected!")
 
 
+
+
+
 class Engine(Fuzzer):
 
     def __init__(self, url, file):
@@ -137,15 +154,21 @@ class Engine(Fuzzer):
       #  print(self.match())
        # self.status()
 
+  
+  
     def start(self):
         self.request()
 
+  
+  
     def request(self):
         if data['request']['payloads'] == True:
             f = Fuzzer(self.url)
         elif data['request']['payloads'] == False:
             self.req()
 
+  
+  
     def req(self):
         global status, responseheaders, flag, responsebody
 
@@ -185,6 +208,7 @@ class Engine(Fuzzer):
         return False
 
 
+
 def start(url):
     files = [
         'vulns/blueprints/openredirect.json',
@@ -192,6 +216,7 @@ def start(url):
     ]
     for file in files:
         Engine(url, file).start()
+
 
 
 # fuff=Fuzzer('http://au.edu.pk','vulns/templates/openredirect.json')

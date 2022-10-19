@@ -1,10 +1,7 @@
-import grequests
-from .FindingAnchorTags import Links
+from ..FindingAnchorTags import Links
+from SubdomainScanner.subdomains import *
 import requests
 import gevent.monkey
-# from SubdomainScanner import *
-# from SubdomainScanner.subdomains import Subdomains
-from SubdomainScanner.subdomains import *
 gevent.monkey.patch_all()
 
 
@@ -36,7 +33,7 @@ class OpenRedirect(Links):
         print(links)
         # rs = (grequests.get(link) for link in links)
         # print(grequests.map(rs))
-        for url in links:
+        for url in links:   
             print(self.isRedirecting(url))
 
         # print(self.redirects)
@@ -50,35 +47,37 @@ class OpenRedirect(Links):
                 if p in url:
                     url = url.split('=')[0] + '='
                     redirectUrl.append(url)
-        ##
+        payload = "dtmkc"
+        redirectUrl = [self.injectpayload(i, payload) for i in redirectUrl]
         return redirectUrl
 
     # lisf of places where openredirects occur are login,create password,reset,checkout
     # a method to inject payloads after parameters in the url
+
     def injectpayload(self, url, payload):
         # url = url.split('?')
         # url = url[0]+'?'+payload+'&'+url[1]
         return url + payload
 
 
-if __name__ == '__main__':
-    rd = OpenRedirect('https://fast.edu.pk/')
-    OpenRedirect.redirects = ['https://www.google.com?next=', 'https://www.bing.com?url=test.com',
-                              'https://www.yahoo.com?go=google.com', 'https://www.duckduckgo.com']
-   # print(rd.isRedirecting('https://mcdonalds.com.pk//wp-admin/'))
-    print(rd.checkredirects())
+# if __name__ == '__main__':
+#     rd = OpenRedirect('https://fast.edu.pk/')
+#     OpenRedirect.redirects = ['https://www.google.com?next=', 'https://www.bing.com?url=test.com',
+#                               'https://www.yahoo.com?go=google.com', 'https://www.duckduckgo.com']
+#    # print(rd.isRedirecting('https://mcdonalds.com.pk//wp-admin/'))
+#     print(rd.checkredirects())
 
 
 # http://s.adroll.com/j/exp/ERYIVUAW3VAMTPY6WYTWZX/index.js
 
 
-class OpenSubs():
+class OpenSubs:
 
     def __init__(self, url):
         self.url = url
         Subdomains(url, aggressive=False)
       #  print(self.makepayload())
-        print(self.request())
+        self.request()
 
     def wordlist(self, path: str = "wordlist/openredirect.txt"):
         with open(path, "r") as file:
@@ -86,6 +85,8 @@ class OpenSubs():
             for line in file:
                 data.append(line.replace("\n", ""))
         return data
+
+
 
     def makepayload(self):
         urls = []
@@ -96,15 +97,18 @@ class OpenSubs():
                 urls.append(url)
         return urls
 
+
     def checkredirect(self, u):
         try:
             r = requests.get(u, allow_redirects=True)
             if str(r.status_code).startswith('3'):
                 return u
             else:
-                return u
+                return r.status_code
         except:
             return False
+
+
 
     def request(self):
         url = list(set(self.makepayload()))
