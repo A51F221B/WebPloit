@@ -53,6 +53,7 @@ class Fuzzer:
   
     
     def checkers(self):
+        global regmatch
         flag = False
         # try:
         for matcher in data['matches']:
@@ -76,7 +77,7 @@ class Fuzzer:
                         #reg=r"(?m)^(?:Server\s*?:\s*?)(?:https?:\/\/|\/\/|\/\\\\|\/\\)?(?:[a-zA-Z0-9\-_\.@]*)cloudflare\/?(\/|[^.].*)?$"
                         # reg = r"(?m)^(?:Location\s*?:\s*?)(?:https?:\/\/|\/\/|\/\\\\|\/\\)?(?:[a-zA-Z0-9\-_\.@]*)example\.com\/?(\/|[^.].*)?$"
                         try:
-                            regmatch = Engine.regex_match(self, reg, head)
+                            regmatch = Fuzzer.regex_match(self, reg, head)
                             print(f"Pattern found : {regmatch}")
                         except:
                             pass
@@ -86,11 +87,13 @@ class Fuzzer:
                     reg = matcher['regex']
                     print(reg)
                     b = responsebody.decode('utf-8')
-                    regmatch = Engine.regex_match(self, reg, b)
+                    regmatch = Fuzzer.regex_match(self, reg, b)
                     print(f"Pattern found : {regmatch}")
-
-        self.matchersCondition(flag, regmatch)
-
+        try:
+            self.matchersCondition(flag, regmatch)
+        except:
+            pass
+        
 
 
 
@@ -144,6 +147,20 @@ class Fuzzer:
 
         except KeyboardInterrupt:
             print("CTRL+C detected!")
+
+
+
+    def regex_match(self, regex, string):
+        matches = re.finditer(regex, string, re.MULTILINE | re.IGNORECASE)
+        for match in matches:
+            return True
+        return False
+
+
+
+
+
+
 
 
 
@@ -205,12 +222,6 @@ class Engine(Fuzzer):
         print(responseheaders)
         print(r.data)
         self.checkers()
-
-    def regex_match(self, regex, string):
-        matches = re.finditer(regex, string, re.MULTILINE | re.IGNORECASE)
-        for match in matches:
-            return True
-        return False
 
 
 
