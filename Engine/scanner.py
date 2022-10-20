@@ -39,7 +39,7 @@ class Fuzzer:
         url = f'{self.url}/{payload}',
         r = http.request(
             data['request']['method'],
-            url=f'{self.url}/{payload}',
+            url=f'{self.url}{payload}', # if we want url/payload add "/payload" in json template
             headers=data['request']['headers'],
             redirect=data['request']['redirects']
         )
@@ -72,14 +72,19 @@ class Fuzzer:
                     if matcher['key'] in responseheaders:
                         head = f'{matcher["key"]}: {responseheaders[matcher["key"]]}'
                         print(head)
-                        # reg=r"(?m)^(?:Server\s*?:\s*?)(?:https?:\/\/|\/\/|\/\\\\|\/\\)?(?:[a-zA-Z0-9\-_\.@]*)cloudflare\/?(\/|[^.].*)?$"
-                        reg = r"(?m)^(?:Location\s*?:\s*?)(?:https?:\/\/|\/\/|\/\\\\|\/\\)?(?:[a-zA-Z0-9\-_\.@]*)example\.com\/?(\/|[^.].*)?$"
-                        regmatch = Engine.regex_match(self, reg, head)
-                        print(f"Pattern found : {regmatch}")
+                        reg=matcher['regex']
+                        #reg=r"(?m)^(?:Server\s*?:\s*?)(?:https?:\/\/|\/\/|\/\\\\|\/\\)?(?:[a-zA-Z0-9\-_\.@]*)cloudflare\/?(\/|[^.].*)?$"
+                        # reg = r"(?m)^(?:Location\s*?:\s*?)(?:https?:\/\/|\/\/|\/\\\\|\/\\)?(?:[a-zA-Z0-9\-_\.@]*)example\.com\/?(\/|[^.].*)?$"
+                        try:
+                            regmatch = Engine.regex_match(self, reg, head)
+                            print(f"Pattern found : {regmatch}")
+                        except:
+                            pass
 
                 if matcher['part'] == 'body':
                    # print(responsebody)
                     reg = matcher['regex']
+                    print(reg)
                     b = responsebody.decode('utf-8')
                     regmatch = Engine.regex_match(self, reg, b)
                     print(f"Pattern found : {regmatch}")
@@ -172,7 +177,7 @@ class Engine(Fuzzer):
     def req(self):
         global status, responseheaders, flag, responsebody
 
-        body = '''<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE test [ <!ENTITY xxe SYSTEM "file:///etc/passwd"> ]><stockCheck><productId>&xxe;</productId><storeId>1</storeId></stockCheck>'''
+        # body = '''<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE test [ <!ENTITY xxe SYSTEM "file:///etc/passwd"> ]><stockCheck><productId>&xxe;</productId><storeId>1</storeId></stockCheck>'''
 
         http = urllib3.PoolManager()
         print(f"payloads : {data['request']['payloads']}")
@@ -189,16 +194,16 @@ class Engine(Fuzzer):
                 data['request']['method'],
                 url=self.url,
                 headers=data['request']['headers'],
-                body=body
-                # body=data['request']['body']
+                #body=body
+                body=data['request']['body']
             )
       #  print(r.headers)
         status = r.status
         responseheaders = r.headers
         responsebody = r.data
         print(status)
-      #  print(responseheaders)
-       # print(r.data)
+        print(responseheaders)
+        print(r.data)
         self.checkers()
 
     def regex_match(self, regex, string):
@@ -220,8 +225,9 @@ def start(url):
 
 
 # fuff=Fuzzer('http://au.edu.pk','vulns/templates/openredirect.json')
-engine = Engine('http://ptl-3e83540a-71ed55c3.libcurl.so/redirect.php?uri=',
-                'blueprints/openredirect.json').start()
+engine = Engine('http://ptl-30929a59-df95151f.libcurl.so/redirect.php?uri=https://example.com','blueprints/openredirect.json').start()
 
 
 # https://ptl-b00d72f4-cf435e49.libcurl.so/redirect.php?uri=https://example.com
+
+
