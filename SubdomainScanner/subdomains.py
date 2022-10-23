@@ -3,7 +3,7 @@ from .ShodanSearch import Shodan
 from .GoogleSearch import GoogleEnum
 from .BingSearch import BingEnum
 from .DictionarySearch import Dictionary
-
+import json
 
 
 # Dictionary('nust.edu.pk')
@@ -24,15 +24,17 @@ class Subdomains(DuckDuckGoEnum):
        # Shodan(self.url)
         if self.aggressive:
             try:
-                Shodan(self.url)
                 Dictionary(self.url)
             except Exception as e:
                 print(e)
+        Shodan(self.url)
         GoogleEnum(self.url)
         BingEnum(self.url)
         DuckDuckGoEnum(self.url)
         self.subdomains = DuckDuckGoEnum.GetDomain(self).copy()
-        print(self.subdomains)
+    
+    def toJson(self):
+        return json.dumps(self.subdomains, indent=2)
 
 
 # if __name__ == '__main__':

@@ -160,12 +160,6 @@ class Fuzzer:
 
 
 
-
-
-
-
-
-
 class Engine(Fuzzer):
 
     def __init__(self, url, file):
@@ -235,8 +229,20 @@ def start(url):
 
 
 
-# fuff=Fuzzer('http://au.edu.pk','vulns/templates/openredirect.json')
-engine = Engine('http://ptl-30929a59-df95151f.libcurl.so/redirect.php?uri=https://example.com','blueprints/openredirect.json').start()
+ATTACK_FILE = {
+    "xxe" : 'vulns/blueprints/xxe.json',
+    "open_redirect" : 'vulns/blueprints/openredirect.json',
+}
+
+
+def start(url, attack_type):
+        Engine(url, ATTACK_FILE[attack_type]).start()
+        return status, responseheaders, responsebody
+
+
+
+# # fuff=Fuzzer('http://au.edu.pk','vulns/templates/openredirect.json')
+# engine = Engine('http://ptl-30929a59-df95151f.libcurl.so/redirect.php?uri=https://example.com','blueprints/openredirect.json').start()
 
 
 # https://ptl-b00d72f4-cf435e49.libcurl.so/redirect.php?uri=https://example.com

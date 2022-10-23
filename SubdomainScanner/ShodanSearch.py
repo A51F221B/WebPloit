@@ -19,13 +19,14 @@ class Shodan:
         self.SearchDomains()
         print(self.listtoString())
 
+
     def SearchDomains(self):
         try:
             r = requests.get(
                 f'https://api.shodan.io/dns/domain/{self.url}?key={API_key}')
             data = json.loads(r.text)
          #   print(json.dumps(data, indent=2))
-            with open('Found_Subdomains.json', 'a') as f:
+            with open('Found_Subdomains.json', 'w') as f:
                 f.write(json.dumps(data, indent=2))
                 for subdomain in data['subdomains']:
                     self.subdomains.append(subdomain+'.'+self.url)
