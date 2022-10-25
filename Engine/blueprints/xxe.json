@@ -1,6 +1,7 @@
 {
     "id": "xxe",
     "url":"",
+    "description":"xxe vulnerability is a vulnerability that allows an attacker to read files on the server, and in some cases, to execute commands on the server.",
     "severity": "high",
     "request":{
         "path":"/",

@@ -23,6 +23,7 @@ def home():
     # Render a template
     return render_template("index.html")
 
+
 def parser(attack_type):
     # url = request.args.get('url')
     # print(url)
@@ -34,16 +35,19 @@ def parser(attack_type):
     print(x)
     return render_template_string(x)
 
+
 def readSubdomains():
     with open("./Found_Subdomains.json") as f:
         data = json.loads(f.read())
         return data
 
 
+
 @app.route("/api/subdomains", methods=['GET'])
 def subdomains():
     # display json data on this endpoint
     return readSubdomains()
+
 
 
 @app.route("/api/xxe", methods=["POST"])

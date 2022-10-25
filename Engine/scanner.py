@@ -3,7 +3,6 @@ import re
 import urllib3
 from queue import Queue
 from threading import Thread, Lock
-from flask import Flask, request
 
 
 class WebBody:
@@ -36,7 +35,7 @@ class Fuzzer:
     def scan(self, payload):
         global responseheaders, status, responsebody
         http = urllib3.PoolManager()
-        url = f'{self.url}/{payload}',
+        url = f'{self.url}/{payload}', #note that this is just url variable and is just being printed
         r = http.request(
             data['request']['method'],
             url=f'{self.url}{payload}', # if we want url/payload add "/payload" in json template
@@ -91,16 +90,31 @@ class Fuzzer:
                     print(f"Pattern found : {regmatch}")
         try:
             self.matchersCondition(flag, regmatch)
-        except:
+            # if(self.matchersCondition(flag, regmatch)) and data["stopAtMatch"]==True:
+            #     exit(1)
+        except Exception as e:
             pass
         
 
 
+    def printinfo(self):
+        # returning vulnerability information in json format 
+        return {
+            "id": data['id'],
+            "matchers-condition": data['matchers-condition'],
+            "request": data['request'],
+            "matches": data['matches']
+        }
+
+
+
 
     def matchersCondition(self, flag, regmatch):
+        import pprint
         if data['matchers-condition'] == 'and':
             if flag and regmatch:
                 print("Vulnerability Found")
+                pprint.pprint(self.printinfo())
                 return True
             else:
                 print("Vulnerability not found")
@@ -108,6 +122,7 @@ class Fuzzer:
         elif data['matchers-condition'] == 'or':
             if flag or regmatch:
                 print("Vulnerability Found")
+                pprint.pprint(self.printinfo())
                 return True
 
 

