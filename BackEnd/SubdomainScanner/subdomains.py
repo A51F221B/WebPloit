@@ -20,6 +20,7 @@ class Subdomains(DuckDuckGoEnum):
         self.aggressive = aggressive
         self.GetSubdomains(aggressive)
 
+
     def GetSubdomains(self, aggressive):
        # Shodan(self.url)
         if self.aggressive:

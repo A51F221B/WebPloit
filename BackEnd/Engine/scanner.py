@@ -36,12 +36,15 @@ class Fuzzer:
         global responseheaders, status, responsebody
         http = urllib3.PoolManager()
         url = f'{self.url}/{payload}', #note that this is just url variable and is just being printed
-        r = http.request(
-            data['request']['method'],
-            url=f'{self.url}{payload}', # if we want url/payload add "/payload" in json template
-            headers=data['request']['headers'],
-            redirect=data['request']['redirects']
-        )
+        try:
+            r = http.request(
+                data['request']['method'],
+                url=f'{self.url}{payload}', # if we want url/payload add "/payload" in json template
+                headers=data['request']['headers'],
+                redirect=data['request']['redirects']
+            )
+        except:
+            pass
         print(f'{url} {r.status}')
         responseheaders = r.headers
         # print(responseheaders)
@@ -72,7 +75,7 @@ class Fuzzer:
                     if matcher['key'] in responseheaders:
                         head = f'{matcher["key"]}: {responseheaders[matcher["key"]]}'
                         print(head)
-                        reg=matcher['regex']
+                        reg=matcher['regex'] # uncomment this if you want to use regex from json file
                         #reg=r"(?m)^(?:Server\s*?:\s*?)(?:https?:\/\/|\/\/|\/\\\\|\/\\)?(?:[a-zA-Z0-9\-_\.@]*)cloudflare\/?(\/|[^.].*)?$"
                         # reg = r"(?m)^(?:Location\s*?:\s*?)(?:https?:\/\/|\/\/|\/\\\\|\/\\)?(?:[a-zA-Z0-9\-_\.@]*)example\.com\/?(\/|[^.].*)?$"
                         try:
@@ -101,7 +104,7 @@ class Fuzzer:
         # returning vulnerability information in json format 
         return {
             "id": data['id'],
-            "matchers-condition": data['matchers-condition'],
+            "endpoint": self.url,
             "request": data['request'],
             "matches": data['matches']
         }
@@ -238,6 +241,7 @@ def start(url):
     files = [
         'vulns/blueprints/openredirect.json',
         'vulns/blueprints/xxe.json'
+        'vulns/blueprints/xss.json'
     ]
     for file in files:
         Engine(url, file).start()
@@ -247,6 +251,7 @@ def start(url):
 ATTACK_FILE = {
     "xxe" : 'vulns/blueprints/xxe.json',
     "open_redirect" : 'vulns/blueprints/openredirect.json',
+    "xss" : 'vulns/blueprints/xss.json'
 }
 
 
