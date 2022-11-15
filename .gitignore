@@ -12,4 +12,6 @@ vulns/wordlist/__pycache__/
 /__pycache__/
 dict.txt
 *.pyc
+/node_modules
+/Frontend/node_modules
 
