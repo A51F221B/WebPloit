@@ -36,22 +36,24 @@ class Dictionary:
                 redirect=True,
                 timeout=3
             )
-
-            if r.status == 200:
-                with self.thread_Lock:
-                    self.c.print(
-                        f'[+] {subdomain}.{self.url}', style="bold green")
-                    self.found.append(subdomain)
-            elif r.status == 503:
-                with self.thread_Lock:
-                    self.c.print(
-                        f'[-] {subdomain}.{self.url} ', style="bold green")
-            else:
-                with self.thread_Lock:
-                    self.c.print(
-                        f'[-] {subdomain}.{self.url}', style="bold red")
+            try:
+                if r.status == 200:
+                    with self.thread_Lock:
+                        self.c.print(
+                            f'[+] {subdomain}.{self.url}', style="bold green")
+                        self.found.append(subdomain)
+                elif r.status == 503:
+                    with self.thread_Lock:
+                        self.c.print(
+                            f'[-] {subdomain}.{self.url} ', style="bold green")
+                else:
+                    with self.thread_Lock:
+                        self.c.print(
+                            f'[-] {subdomain}.{self.url}', style="bold red")
+            except:
+                pass
         except Exception as e:
-         #   print(f"Error occurred: {e}")
+            #print(f"Error occurred: {e}")
             pass
 
     def extract(self):
@@ -64,6 +66,8 @@ class Dictionary:
                 exit(1)
             except Exception as E:
                 print("Error occurred: {}".format(E))
+            except:
+                pass
 
     def init(self, threads=100):
         subdomain = self.wordlist()

@@ -16,11 +16,14 @@ class DuckDuckGoEnum(GoogleEnum):
         self.to_string()
 
     def scrape_duckduckgo(self, query):
-        query = urllib.parse.quote_plus(query)
-        link = f'https://www.duckduckgo.com/html/?q=site:{query}'
-        response = GoogleEnum.ReturnSourceCode(self, link)
+        try:
+            query = urllib.parse.quote_plus(query)
+            link = f'https://www.duckduckgo.com/html/?q=site:{query}'
+            response = GoogleEnum.ReturnSourceCode(self, link) 
         # getting all the links from search result
-        links = list(response.html.absolute_links)
+            links = list(response.html.absolute_links)
+        except:
+            pass
         duckduckgo_domains = (
 
             'https://www.duckduckgo.com',
