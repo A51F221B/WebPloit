@@ -15,9 +15,14 @@ class Argparse():
     def __init__(self):
       description= "WebPloit - A Web Application Pentesting Framework"
       self.parser=argparse.ArgumentParser(c.print(description,style="bold red"),formatter_class=argparse.RawTextHelpFormatter)
-      self.parser.add_argument("-s","--subdomains",help="Find Subdomains of a website",action="store",type=str)
-      self.parser.add_argument("-a","--aggressive",help="Find Subdomains of a website",action="store_true")
-      self.parser.add_argument("-u","--url",help="URL of the website",action="store",type=str)
+      subparser=self.parser.add_subparsers(dest="command",required=True)
+
+      # Subdomain Scanner parsing
+      subdomain_parser=subparser.add_parser("subdomain",help="Subdomain Scanner")
+      subdomain_parser.add_argument("-s","--subdomains",help="Find Subdomains of a website",action="store",type=str,required=True)
+      subdomain_parser.add_argument("-a","--aggressive",help="Find Subdomains of a website",action="store_true")
+      subdomain_parser.add_argument("-u","--url",help="URL of the website",action="store",type=str)
+
 
 
     def validateURL(self,url):
@@ -37,18 +42,22 @@ def main():
   arg=Argparse()
   args=arg.parser.parse_args()
 
-  # for subdomain enumeration
-  if args.subdomains:
-    if arg.validateURL(args.subdomains):
-      if args.subdomains.startswith("http://"):
-        args.subdomains=args.subdomains.replace("http://","") # removing http:// from the url
-      if args.aggressive:
-        Subdomains(args.subdomains,aggressive=True)
+  #for subdomain enumeration
+  if args.command=="subdomain":
+    if args.subdomains:
+      if arg.validateURL(args.subdomains):
+        if args.subdomains.startswith("http://"):
+          args.subdomains=args.subdomains.replace("http://","") # removing http:// from the url
+        if args.aggressive:
+          Subdomains(args.subdomains,aggressive=True)
+        else:
+          Subdomains(args.subdomains,aggressive=False)
       else:
-        Subdomains(args.subdomains,aggressive=False)
-    else:
-      c.print("[!] Invalid URL entered",style="bold red")
-      c.print("[>] Example : example.com or http://example.com",style="bold green")
+        c.print("[!] Invalid URL entered",style="bold red")
+        c.print("[>] Example : example.com or http://example.com",style="bold green")
+  else:
+    c.print("[!] Invalid Command Entered",style="bold red")
+    c.print("[>] Example : python3 main.py subdomain -s example.com",style="bold green")
 
  
  
