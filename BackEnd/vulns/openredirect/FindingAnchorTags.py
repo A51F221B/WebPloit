@@ -8,6 +8,7 @@ session=HTMLSession()
 class Links:
     def __init__(self,url) -> None:
         self.url=url
+        print(self.FindLinksInPage())
 
     def FindLinksInPage(self): 
         response=session.get(self.url)
@@ -21,6 +22,8 @@ class Links:
         for link in soup.find_all('a'):
              print(link.get('href'))
 
+
+l=Links('https://mcdonalds.com.pk/')
 
 
 

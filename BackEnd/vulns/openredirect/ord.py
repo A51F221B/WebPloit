@@ -1,8 +1,8 @@
-from ..FindingAnchorTags import Links
-from SubdomainScanner.subdomains import *
+from FindingAnchorTags import Links
 import requests
-import gevent.monkey
-gevent.monkey.patch_all()
+# import gevent.monkey
+# gevent.monkey.patch_all()
+import urllib3
 
 
 class OpenRedirect(Links):
@@ -11,8 +11,8 @@ class OpenRedirect(Links):
 
     def __init__(self, url):
         super().__init__(url)
-      #  self.checklinks()
-        # print(OpenRedirect.redirects)
+        # self.checklinks()
+        # # print(OpenRedirect.redirects)
         # print(self.checkredirects())
 
     def isRedirecting(self, urls):
@@ -47,8 +47,8 @@ class OpenRedirect(Links):
                 if p in url:
                     url = url.split('=')[0] + '='
                     redirectUrl.append(url)
-        payload = "dtmkc"
-        redirectUrl = [self.injectpayload(i, payload) for i in redirectUrl]
+        # payload = "dtmkc"
+        # redirectUrl = [self.injectpayload(i, payload) for i in redirectUrl]
         return redirectUrl
 
     # lisf of places where openredirects occur are login,create password,reset,checkout
@@ -60,12 +60,12 @@ class OpenRedirect(Links):
         return url + payload
 
 
-# if __name__ == '__main__':
-#     rd = OpenRedirect('https://fast.edu.pk/')
-#     OpenRedirect.redirects = ['https://www.google.com?next=', 'https://www.bing.com?url=test.com',
-#                               'https://www.yahoo.com?go=google.com', 'https://www.duckduckgo.com']
-#    # print(rd.isRedirecting('https://mcdonalds.com.pk//wp-admin/'))
-#     print(rd.checkredirects())
+if __name__ == '__main__':
+    rd = OpenRedirect('https://jazz.com.pk')
+    OpenRedirect.redirects = ['https://www.google.com?next=', 'https://www.bing.com?url=test.com',
+                              'https://www.yahoo.com?go=google.com', 'https://www.duckduckgo.com']
+   # print(rd.isRedirecting('https://mcdonalds.com.pk//wp-admin/'))
+    print(rd.checkredirects())
 
 
 # http://s.adroll.com/j/exp/ERYIVUAW3VAMTPY6WYTWZX/index.js
