@@ -11,9 +11,9 @@ class OpenRedirect(Links):
 
     def __init__(self, url):
         super().__init__(url)
-        # self.checklinks()
-        # # print(OpenRedirect.redirects)
-        # print(self.checkredirects())
+        self.checklinks()
+        print(self.checkredirects())
+        # print(OpenRedirect.redirects)
 
     def isRedirecting(self, urls):
         # keep allow_redirects= False to detect redirects
@@ -22,20 +22,20 @@ class OpenRedirect(Links):
         try:
             if str(r.status_code).startswith('3'):
                 OpenRedirect.redirects.append(urls)
-                return True, urls
+              #  return True, urls
             else:
                 return False
         except:
-            return False
+            pass
 
     def checklinks(self):
         links = list(self.FindLinksInPage())
-        print(links)
+       # print(links)
         # rs = (grequests.get(link) for link in links)
         # print(grequests.map(rs))
         for url in links:   
-            print(self.isRedirecting(url))
-
+         #   print(self.isRedirecting(url))
+            self.isRedirecting(url)
         # print(self.redirects)
 
     def checkredirects(self):
@@ -62,10 +62,10 @@ class OpenRedirect(Links):
 
 if __name__ == '__main__':
     rd = OpenRedirect('https://jazz.com.pk')
-    OpenRedirect.redirects = ['https://www.google.com?next=', 'https://www.bing.com?url=test.com',
-                              'https://www.yahoo.com?go=google.com', 'https://www.duckduckgo.com']
-   # print(rd.isRedirecting('https://mcdonalds.com.pk//wp-admin/'))
-    print(rd.checkredirects())
+#     OpenRedirect.redirects = ['https://www.google.com?next=', 'https://www.bing.com?url=test.com',
+#                               'https://www.yahoo.com?go=google.com', 'https://www.duckduckgo.com']
+#    # print(rd.isRedirecting('https://mcdonalds.com.pk//wp-admin/'))
+#     print(rd.checkredirects())
 
 
 # http://s.adroll.com/j/exp/ERYIVUAW3VAMTPY6WYTWZX/index.js
