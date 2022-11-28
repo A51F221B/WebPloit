@@ -2,6 +2,7 @@
 from core import requester
 from core import extractor
 from core import save_it
+from core import anchortags
 from urllib.parse import unquote 
 import requests
 import re
@@ -20,7 +21,7 @@ def main():
     parser.add_argument('-l','--level' ,  help = 'For nested parameters [ex : --level high]')
     parser.add_argument('-e','--exclude', help= 'extensions to exclude [ex --exclude php,aspx]')
     parser.add_argument('-o','--output' , help = 'Output file name [by default it is \'domain.txt\']')
-    parser.add_argument('-p','--placeholder' , help = 'The string to add as a placeholder after the parameter name.', default = "FUZZ")
+    parser.add_argument('-p','--placeholder' , help = 'The string to add as a placeholder after the parameter name.', default = "")
     parser.add_argument('-q', '--quiet', help='Do not print the results to the screen', action='store_true')
     parser.add_argument('-r', '--retries', help='Specify number of retries for 4xx and 5xx errors', default=3)
     args = parser.parse_args()
@@ -30,6 +31,8 @@ def main():
     else:
         url = f"https://web.archive.org/cdx/search/cdx?url={args.domain}/*&output=txt&fl=original&collapse=urlkey&page=/"
     
+    alist=anchortags.FindLinksInPage(f'https://{args.domain}')
+
     retry = True
     retries = 0
     while retry == True and retries <= int(args.retries):
@@ -56,24 +59,30 @@ def main():
         print(f"\u001b[31m[!] URLS containing these extensions will be excluded from the results   : {black_list}\u001b[0m\n")
     
     final_uris = extractor.param_extract(response , args.level , black_list, args.placeholder)
-    save_it.save_func(final_uris , args.output , args.domain)
+    final_uris.extend(alist)
+    final_uris = list(set(final_uris))
 
-    if not args.quiet:
-        print("\u001b[32;1m")
-        print('\n'.join(final_uris))
-        print("\u001b[0m")
+    # variable final_urls is the final list of urls that are extracted
 
-    print(f"\n\u001b[32m[+] Total number of retries:  {retries-1}\u001b[31m")
-    print(f"\u001b[32m[+] Total unique urls found : {len(final_uris)}\u001b[31m")
-    if args.output:
-        if "/" in args.output:
-            print(f"\u001b[32m[+] Output is saved here :\u001b[31m \u001b[36m{args.output}\u001b[31m" )
+    print(final_uris)
+  #  save_it.save_func(final_uris , args.output , args.domain)
 
-        else:
-            print(f"\u001b[32m[+] Output is saved here :\u001b[31m \u001b[36moutput/{args.output}\u001b[31m" )
-    else:
-        print(f"\u001b[32m[+] Output is saved here   :\u001b[31m \u001b[36moutput/{args.domain}.txt\u001b[31m")
-    print("\n\u001b[31m[!] Total execution time      : %ss\u001b[0m" % str((time.time() - start_time))[:-12])
+    # if not args.quiet:
+    #     print("\u001b[32;1m")
+    #     print('\n'.join(final_uris))
+    #     print("\u001b[0m")
+
+    # print(f"\n\u001b[32m[+] Total number of retries:  {retries-1}\u001b[31m")
+    # print(f"\u001b[32m[+] Total unique urls found : {len(final_uris)}\u001b[31m")
+    # if args.output:
+    #     if "/" in args.output:
+    #         print(f"\u001b[32m[+] Output is saved here :\u001b[31m \u001b[36m{args.output}\u001b[31m" )
+
+    #     else:
+    #         print(f"\u001b[32m[+] Output is saved here :\u001b[31m \u001b[36moutput/{args.output}\u001b[31m" )
+    # else:
+    #     print(f"\u001b[32m[+] Output is saved here   :\u001b[31m \u001b[36moutput/{args.domain}.txt\u001b[31m")
+    # print("\n\u001b[31m[!] Total execution time      : %ss\u001b[0m" % str((time.time() - start_time))[:-12])
 
 
 

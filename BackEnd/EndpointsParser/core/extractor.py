@@ -1,4 +1,5 @@
 import re 
+from requests_html import HTMLSession
 
 
 def param_extract(response, level, black_list, placeholder):
@@ -26,7 +27,6 @@ def param_extract(response, level, black_list, placeholder):
             if level == 'high':
                 final_uris.append(i[:second_delim+1] + placeholder)
 
-    # for i in final_uris:
-    #     k = [ele for ele in black_list if(ele in i)]
+    
     
     return list(set(final_uris))

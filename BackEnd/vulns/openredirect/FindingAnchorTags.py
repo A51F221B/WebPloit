@@ -12,6 +12,7 @@ class Links:
     def __init__(self,url) -> None:
         self.url=url
         Links.linkz=list(self.FindLinksInPage())
+       # print(Links.linkz)
         print(self.checkredirects())
       #  print(self.FindLinksInPage())
 
@@ -32,7 +33,7 @@ class Links:
       #  urls=list(self.FindLinksInPage())
         redirectUrl = []
         parameters = ['?next=', '?url=', '?uri=', '?r=', '?target=', '?rurl=', '?dest=', '?destination=',
-                      '?redirect_url=', '?redir=', '?redirect=', '/redirect/', '?redirect_to=', '?return=', '?go=', '?target_url=']
+                      '?redirect_url=', '?redir=', '?redirect=', '/redirect/', '?redirect_to=', '?return=', '?go=', '?target_url=','?success_redirect_url']
         for p in parameters:
             for url in Links.linkz:
                 if p in url:
@@ -46,7 +47,7 @@ class Links:
     # finding xss endpoints in links
 
 
-Links('http://ptl-363d28cf-65fc9b09.libcurl.so/')
+Links('https://au.edu.pk')
 
 
 

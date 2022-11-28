@@ -1,6 +1,6 @@
 import requests
 import random
-
+import time
 
 def connector(url):
     result = False

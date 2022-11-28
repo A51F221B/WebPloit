@@ -97,8 +97,7 @@ class Fuzzer:
             #     exit(1)
         except Exception as e:
             pass
-        
-
+     
 
     def printinfo(self):
         # returning vulnerability information in json format 

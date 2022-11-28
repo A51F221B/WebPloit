@@ -20,7 +20,7 @@ class Argparse():
       # Subdomain Scanner parsing
       subdomain_parser=subparser.add_parser("subdomain",help="Subdomain Scanner")
       subdomain_parser.add_argument("-s","--subdomains",help="Find Subdomains of a website",action="store",type=str,required=True)
-      subdomain_parser.add_argument("-a","--aggressive",help="Find Subdomains of a website",action="store_true")
+      subdomain_parser.add_argument("-a","--aggressive",help="Find Subdomains of a website",action="store_true",default=False)
       subdomain_parser.add_argument("-u","--url",help="URL of the website",action="store",type=str)
 
 
@@ -50,8 +50,6 @@ def main():
           args.subdomains=args.subdomains.replace("http://","") # removing http:// from the url
         if args.aggressive:
           Subdomains(args.subdomains,aggressive=True)
-        else:
-          Subdomains(args.subdomains,aggressive=False)
       else:
         c.print("[!] Invalid URL entered",style="bold red")
         c.print("[>] Example : example.com or http://example.com",style="bold green")
