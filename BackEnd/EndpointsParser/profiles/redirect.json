@@ -25,7 +25,18 @@
     "next_page=",
     "file=",
     "load_file=",
-    "uri="
+    "uri=",
+    "r=",
+    "target=",
+    "rurl=",
+    "dest=",
+    "dest_url=",
+    "destination=",
+    "redirect_url=",
+    "redir=",
+    "redir_url=",
+    "success_redirect_url=",
+    "go="
     ]
     }
     

@@ -4,11 +4,6 @@ from .core.extractor import Extractor
 from .core import save_it
 from .core import anchortags
 from urllib.parse import unquote 
-import requests
-import re
-import argparse
-import os
-import sys
 import json
 import time 
 start_time = time.time()
@@ -49,17 +44,13 @@ def init(domain,subs,level,exclude,output,placeholder,quiet,retries,vulns):
         print(f"\u001b[31m[!] URLS containing these extensions will be excluded from the results   : {black_list}\u001b[0m\n")
     
 
+    # variable final_urls is the final list of urls that are extracted
     global final_uris
     final_uris=[]
     ex=Extractor()
     final_uris = ex.param_extract(response , level , black_list, placeholder)
     final_uris.extend(alist)
     final_uris = list(set(final_uris))
-
-   
-    # variable final_urls is the final list of urls that are extracted
-
-  #  save_it.save_func(final_uris , args.output , args.domain)
 
     if not quiet:
         print("\u001b[32;1m")
@@ -68,14 +59,6 @@ def init(domain,subs,level,exclude,output,placeholder,quiet,retries,vulns):
 
     print(f"\n\u001b[32m[+] Total number of retries:  {retries-1}\u001b[31m")
     print(f"\u001b[32m[+] Total unique urls found : {len(final_uris)}\u001b[31m")
-    # if args.output:
-    #     if "/" in args.output:
-    #         print(f"\u001b[32m[+] Output is saved here :\u001b[31m \u001b[36m{args.output}\u001b[31m" )
-
-    #     else:
-    #         print(f"\u001b[32m[+] Output is saved here :\u001b[31m \u001b[36moutput/{args.output}\u001b[31m" )
-    # else:
-    #     print(f"\u001b[32m[+] Output is saved here   :\u001b[31m \u001b[36moutput/{args.domain}.txt\u001b[31m")
     print("\n\u001b[31m[!] Total execution time      : %ss\u001b[0m" % str((time.time() - start_time))[:-12])
 
     if vulns:
@@ -83,6 +66,13 @@ def init(domain,subs,level,exclude,output,placeholder,quiet,retries,vulns):
         print(f"\u001b[32m[+] Potential endpoints for {vulns} are :\u001b[31m")
         ex=Extractor()
         print(ex.find_strings(final_uris,data["patterns"]))
+
+
+    if output:
+        save_it.save_func(final_uris , output , domain)
+        print(f"\u001b[32m[+] Output is saved here :\u001b[31m \u001b[36moutput/{output}\u001b[31m" )
+    else:
+        print(f"\u001b[32m[+] Output not saved in any file.txt\u001b[31m")
     
 
 
@@ -97,21 +87,4 @@ def readFile(file):
         data = json.loads(json_file.read())
         return data
 
-
-
-# if __name__ == "__main__":
-#     main()
-#     ex = Extractor()
-#     readFile("profiles/potential.json")
-#     print(data["patterns"])
-
-#     print("Redirecting urls are : ")
-    
-#     parameters = ['?next=', '?url=', '?uri=', '?r=', '?target=', '?rurl=', '?dest=', '?destination=','?redirect_url=', '?redir=', '?redirect=', '/redirect/', '?redirect_to=', '?return=', '?go=', '?target_url=','?success_redirect_url']
-
-
-#     print(ex.find_strings(final_uris, data["patterns"]))
-
-
-
-
+ 
