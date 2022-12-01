@@ -24,7 +24,8 @@
     "goto=",
     "next_page=",
     "file=",
-    "load_file="
+    "load_file=",
+    "uri="
     ]
     }
     
