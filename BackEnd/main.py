@@ -36,8 +36,9 @@ class Argparse():
       endpoint_parser.add_argument('-r', '--retries', help='Specify number of retries for 4xx and 5xx errors', default=3)
       endpoint_parser.add_argument('-v','--vulns', help='Find Vulnerabilities in the endpoints', choices=['openredirect','xss','sqli','xxe'],default=None)
 
-
-
+      # for Vulnerability Scanner Engine
+      vuln_parser=subparser.add_parser("scanner",help="Vulnerability Scanner Engine")
+      
 
     def validateURL(self,url):
       import re

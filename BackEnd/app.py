@@ -20,8 +20,14 @@ Create user input box
 app = Flask(__name__)
 api = Api(app)
 
+# defining all the general endpoints
+@app.route('/')
+def index():
+    return render_template('templates/index.html')
 
 
+
+# defining all the apis
 class subdomains(Resource):
     def get(self):
         with open("./Found_Subdomains.json") as f:
