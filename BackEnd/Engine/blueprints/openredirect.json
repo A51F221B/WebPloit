@@ -7,7 +7,7 @@
         "redirects": false,
         "payloads": true,
         "headers": {
-            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0"
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/100.0"
         }
     },
     "stopAtMatch": true,
@@ -16,17 +16,16 @@
         {
             "type": "regex",
             "part": "header",
-            "lookAt" : "response",
             "key": "Location",
             "regex": "(?m)^(?:Location\\s*?:\\s*?)(?:https?:\\/\\/|\\/\\/|\\/\\\\\\\\|\\/\\\\)?(?:[a-zA-Z0-9\\-_\\.@]*)example\\.com\\/?(\\/|[^.].*)?$"
         },
         {
             "type": "status",
-            "status": [301, 302, 303, 307, 308],
+            "code": [301, 302, 303, 307, 308],
             "condition": "or"
         }
     ],
     "payloads": ["https://example.com","%0d/example.com/","%00/example.com/","%09/example.com/",
-    "%5C%5Cexample.com/%252e%252e%252f","Pages/Admission/Scholarship.aspx"]
+    "%5C%5Cexample.com/%252e%252e%252f"]
     
 }

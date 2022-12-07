@@ -9,7 +9,7 @@ import time
 start_time = time.time()
 
 
-def init(domain,subs,level,exclude,output,placeholder,quiet,retries,vulns):
+def init(domain,subs=None,level=None,exclude=None,output=None,placeholder=None,quiet=None,retries=None,vulns=None):
 
     if subs == True or " True":
         url = f"https://web.archive.org/cdx/search/cdx?url=*.{domain}/*&output=txt&fl=original&collapse=urlkey&page=/"

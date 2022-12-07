@@ -63,8 +63,9 @@ def main():
       if arg.validateURL(args.subdomains):
         if args.subdomains.startswith("http://"):
           args.subdomains=args.subdomains.replace("http://","") # removing http:// from the url
-        if args.aggressive:
-          Subdomains(args.subdomains,aggressive=True)
+          Subdomains(args.subdomains,aggressive=False)
+        elif args.aggressive:
+          Subdomains(args.subdomains,args.aggressive)
       else:
         c.print("[!] Invalid URL entered",style="bold red")
         c.print("[>] Example : example.com or http://example.com",style="bold green")
