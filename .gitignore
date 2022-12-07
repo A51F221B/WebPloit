@@ -18,3 +18,4 @@ dict.txt
 ../.fleet/
 /.fleet/
 BackEnd/EndpointsParser/output/
+.DS_Store
