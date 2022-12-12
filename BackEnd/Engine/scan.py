@@ -23,4 +23,5 @@ class Scan:
 
 
 
-Scan("http://ptl-f5cf010c-2a20584a.libcurl.so/redirect.php?uri=","blueprints/openredirect.json")
+Scan("http://ptl-c7f2afd8-0eee6fd8.libcurl.so/redirect.php?uri=","blueprints/openredirect.json")
+

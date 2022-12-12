@@ -1,6 +1,4 @@
-<div align="center">
-<img src="logo.png" alt="WebPloit logo" width="150" height="150">
-                                                           
+<div align="center">                                                       
 <h1 align="center">WebPloit</h1>
 </div>
 

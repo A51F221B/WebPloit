@@ -14,8 +14,8 @@ class Matchers:
         self.responseData=responseData
        # print(self.headerMatch())
         # print(self.statusCodeMatch())
-        # print(self.headerMatch())
-        print(self.isVulnerablity())
+        print(self.headerMatch())
+        #print(self.isVulnerablity())
 
 
     def regex_match(self,pattern: str, string: str) -> bool:
@@ -91,8 +91,9 @@ class Matchers:
                         for k in self.key:
                             if k in self.responseData[payload][key]:
                                 for r in self.regex:
-                                    if self.regex_match(r, self.responseData[payload][key][k]):
-                                        return True
+                                  string=f'{k}:{self.responseData[payload][key][k]}'
+                                  if self.regex_match(r, string):
+                                     return True
                          
 
     def bodyMatch(self):
@@ -102,11 +103,12 @@ class Matchers:
 
     def isVulnerablity(self):
         conditions=[self.statusCodeMatch(),self.headerMatch(),self.bodyMatch()]
-        conditions = filter(lambda x: x is not None, conditions) # remove None values
+        conditions = map(lambda x: x if x is not None else False, conditions)
         if self.matchCondition == "and":
             if all(conditions):
                 return True
         elif self.matchCondition == "or":
             if any(conditions): 
                 return True
+        
 
