@@ -13,7 +13,7 @@ class Matchers:
         self.rbody=rbody
         self.responseData=responseData
        # print(self.headerMatch())
-        # print(self.statusCodeMatch())
+        #print(self.statusCodeMatch())
         #print(self.headerMatch())
         #print(self.bodyMatch())
         print(self.isVulnerablity())
@@ -110,7 +110,7 @@ class Matchers:
 
     def isVulnerablity(self):
         conditions=[self.statusCodeMatch(),self.headerMatch(),self.bodyMatch()]
-        conditions = map(lambda x: x if x is not None else False, conditions)
+        conditions = [c for c in conditions if c is not None] # remove None values
         if self.matchCondition == "and":
             if all(conditions):
                 return True
