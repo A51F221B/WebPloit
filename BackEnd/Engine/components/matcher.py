@@ -2,7 +2,7 @@ import re
 
 class Matchers:
 
-    def __init__(self,matchCondition,matchtype,part,key,regex,code,payloads,rbody,responseData:dict):
+    def __init__(self,matchCondition=None,matchtype=None,part=None,key=None,regex=None,code=None,payloads=None,rbody=None,responseData=None):
         self.matchCondition=matchCondition
         self.matchtype=matchtype
         self.part=part
@@ -14,8 +14,9 @@ class Matchers:
         self.responseData=responseData
        # print(self.headerMatch())
         # print(self.statusCodeMatch())
-        print(self.headerMatch())
-        #print(self.isVulnerablity())
+        #print(self.headerMatch())
+        #print(self.bodyMatch())
+        print(self.isVulnerablity())
 
 
     def regex_match(self,pattern: str, string: str) -> bool:
@@ -58,7 +59,7 @@ class Matchers:
 
 
     def isBody(self):
-        for match in self.matchtype:
+        for match in self.part:
             if match == 'body':
                 return True
 
@@ -97,7 +98,13 @@ class Matchers:
                          
 
     def bodyMatch(self):
-        return None
+        if self.isBody():
+            for payload in self.payloads:
+                for key in self.responseData[payload]:
+                    if key == 'data':
+                        for r in self.regex:
+                            if self.regex_match(r, str(self.responseData[payload][key])):
+                                return True
 
 
 

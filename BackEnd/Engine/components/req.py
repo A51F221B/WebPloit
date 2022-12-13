@@ -1,5 +1,5 @@
 import urllib3
-
+from urllib.parse import urlparse
 
 class Requester:
     def __init__(self,url,template,headers,payloads,method,redirects):
@@ -10,10 +10,9 @@ class Requester:
         self.method = method
         self.redirects = redirects
 
-
     def req(self):
         # using urllib3 to send requests
-        http = urllib3.PoolManager()
+        http = urllib3.PoolManager(cert_reqs='CERT_NONE') #cert_reqs='CERT_NONE'if cert issue
         responses = {}
         try:
             if self.method == "GET":
@@ -23,10 +22,16 @@ class Requester:
                     # Convert the HTTPHeaderDict object to a dictionary before adding it to the responses
                     responses[payload] = {"headers": dict(response.headers.items()), "status": response.status, "data": response.data}
             elif self.method == "POST":
-                pass
+                for payload in self.payloads:
+                    p=urlparse(self.url)
+                    hostname=p.hostname
+                    # adding hostname to the headers
+                    self.headers['Host']=hostname
+                    response = http.request('POST', self.url, headers=self.headers, body=payload, redirect=self.redirects)
+                    # # Convert the HTTPHeaderDict object to a dictionary before adding it to the responses
+                    responses[payload] = {"headers": dict(response.headers.items()), "status": response.status, "data": response.data}
         except urllib3.exceptions.MaxRetryError as e:
-            # Handle MaxRetryError exceptions here
-            print("An error occurred:", e)
+            pass   
         except urllib3.exceptions.SSLError as e:
             # Handle SSLError exceptions here
             print("An SSL error occurred:", e)
@@ -49,8 +54,7 @@ class Requester:
             # Handle any other exceptions here
             print("An unknown error occurred:", e)
         # return responses and body
-        return responses, response.data
-
-
-
-
+        try:
+            return responses, response.data
+        except:
+            return responses, None
