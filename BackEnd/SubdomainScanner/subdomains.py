@@ -18,11 +18,10 @@ class Subdomains(DuckDuckGoEnum):
     def __init__(self, url, aggressive=False):
         self.url = url
         self.aggressive = aggressive
-        self.GetSubdomains(aggressive)
+        self.GetSubdomains()
 
 
-    def GetSubdomains(self, aggressive):
-       # Shodan(self.url)
+    def GetSubdomains(self):
         if self.aggressive:
             try:
                 Dictionary(self.url)

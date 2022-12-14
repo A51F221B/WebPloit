@@ -16,23 +16,25 @@ class Shodan:
 
     def __init__(self, url) -> None:
         self.url = url
-        self.SearchDomains()
         print(self.listtoString())
-
 
     def SearchDomains(self):
         try:
-            r = requests.get(
-                f'https://api.shodan.io/dns/domain/{self.url}?key={API_key}')
+            r = requests.get('https://api.shodan.io/dns/domain/'+self.url+'?key='+API_key)
             data = json.loads(r.text)
-         #   print(json.dumps(data, indent=2))
-            with open('Found_Subdomains.json', 'w') as f:
-                f.write(json.dumps(data, indent=2))
-                for subdomain in data['subdomains']:
-                    self.subdomains.append(subdomain+'.'+self.url)
-                return self.subdomains
+            return data
         except Exception as e:
             print(e)
 
+
     def listtoString(self):
+        data=self.SearchDomains()
+        for subdomain in data['subdomains']:
+            self.subdomains.append(subdomain+'.'+self.url)
         return '\n'.join(self.subdomains)
+
+
+    def writeToFile(self):
+        with open('Found_Subdomains.json', 'w') as f:
+            f.write(json.dumps(self.SearchDomains(), indent=2))
+

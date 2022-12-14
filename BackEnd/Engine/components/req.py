@@ -12,7 +12,7 @@ class Requester:
 
     def req(self):
         # using urllib3 to send requests
-        http = urllib3.PoolManager(cert_reqs='CERT_NONE') #cert_reqs='CERT_NONE'if cert issue
+        http = urllib3.PoolManager() #cert_reqs='CERT_NONE'if cert issue
         responses = {}
         try:
             if self.method == "GET":

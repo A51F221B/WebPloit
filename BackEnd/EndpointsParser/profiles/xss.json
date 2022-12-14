@@ -1,5 +1,4 @@
 {
-    "flags" : "-HanrE",
     "patterns" : [
     "callback=",
     "jsonp=",

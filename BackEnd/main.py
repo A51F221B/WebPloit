@@ -22,7 +22,6 @@ class Argparse():
       subdomain_parser=subparser.add_parser("subdomain",help="Subdomain Scanner")
       subdomain_parser.add_argument("-s","--subdomains",help="Find Subdomains of a website",action="store",type=str,required=True)
       subdomain_parser.add_argument("-a","--aggressive",help="Find Subdomains of a website",action="store_true",default=False)
-      subdomain_parser.add_argument("-u","--url",help="URL of the website",action="store",type=str)
 
       # for Endpoint Parser
       endpoint_parser=subparser.add_parser("endpoints",help="Endpoint Parser")
@@ -38,6 +37,10 @@ class Argparse():
 
       # for Vulnerability Scanner Engine
       vuln_parser=subparser.add_parser("scanner",help="Vulnerability Scanner Engine")
+      vuln_parser.add_argument("-u","--url",help="URL of the website",action="store",type=str,required=True)
+      vuln_parser.add_argument("-v","--vulns",help="Find Vulnerabilities in the endpoints", choices=['openredirect','xss','sqli','xxe'],default=None)
+      vuln_parser.add_argument("-o","--output",help="Output file name [by default it is \'domain.txt\']",action="store",type=str)
+      vuln_parser.add_argument("-p","--payload",help="Payload to test the vulnerability",action="store",type=str)
       
 
     def validateURL(self,url):
@@ -59,17 +62,7 @@ def main():
 
   #for subdomain enumeration
   if args.command=="subdomain":
-    if args.subdomains:
-      if arg.validateURL(args.subdomains):
-        if args.subdomains.startswith("http://"):
-          args.subdomains=args.subdomains.replace("http://","") # removing http:// from the url
-          Subdomains(args.subdomains,aggressive=False)
-        elif args.aggressive:
-          Subdomains(args.subdomains,args.aggressive)
-      else:
-        c.print("[!] Invalid URL entered",style="bold red")
-        c.print("[>] Example : example.com or http://example.com",style="bold green")
- 
+    Subdomains(args.subdomains, aggressive=False)
   #for endpoint parsing
   elif args.command=="endpoints":
     init(args.domain, args.subs, args.level, args.exclude, args.output, args.placeholder, args.quiet, args.retries,args.vulns)
