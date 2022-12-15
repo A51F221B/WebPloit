@@ -24,7 +24,7 @@ class Shodan:
             data = json.loads(r.text)
             return data
         except Exception as e:
-            print(e)
+            pass
 
 
     def listtoString(self):

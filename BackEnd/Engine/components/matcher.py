@@ -16,7 +16,8 @@ class Matchers:
         #print(self.statusCodeMatch())
         #print(self.headerMatch())
         #print(self.bodyMatch())
-        print(self.isVulnerablity())
+        # print(self.isVulnerablity())
+        # pprint.pprint(self.forAPI())
 
 
 
@@ -80,7 +81,12 @@ class Matchers:
                         for code in self.code:
                             for c in code:
                                 if self.responseData[payload][key] == c:
-                                    return True
+                                    return True,{
+                                        "payload":payload,
+                                        "status":self.responseData[payload][key],
+                                        "matchtype":"status",
+                                        "part":"status",
+                                    }
 
                         
 
@@ -94,8 +100,13 @@ class Matchers:
                             if k in self.responseData[payload][key]:
                                 for r in self.regex:
                                   string=f'{k}:{self.responseData[payload][key][k]}'
-                                  if self.regex_match(r, string):
-                                     return True
+                                  if self.regex_match(r, string):        
+                                    return True,{
+                                        "payload":payload,
+                                        "status":self.responseData[payload]['status'],
+                                        "matchtype":"regex",
+                                        "part":"header",
+                                    }
                          
 
     def bodyMatch(self):
@@ -105,7 +116,12 @@ class Matchers:
                     if key == 'data':
                         for r in self.regex:
                             if self.regex_match(r, str(self.responseData[payload][key])):
-                                return True
+                                return True,{
+                                    "payload":payload,
+                                    "status":self.responseData[payload]['status'],
+                                    "matchtype":"regex",
+                                    "part":"body",
+                                }
 
 
 
@@ -118,3 +134,23 @@ class Matchers:
         elif self.matchCondition == "or":
             if any(conditions): 
                 return True
+
+
+    def forAPI(self):
+        # print in red color
+        print("\033[91m {}\033[00m" .format("[!]Vulnerablity Found"))
+        # print vulnerability information
+        json=[]
+        _json={}
+        if self.isVulnerablity():
+            if self.statusCodeMatch():
+                con,match=self.statusCodeMatch()
+                json.append(match)
+            if self.headerMatch():
+                con,match=self.headerMatch()
+                json.append(match)
+            if self.bodyMatch():
+                con,match=self.bodyMatch()
+                json.append(match)
+            _json['data']=json
+            return _json 

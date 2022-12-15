@@ -4,6 +4,7 @@ from rich import console
 from EndpointsParser.parser import init
 from EndpointsParser.core import * 
 from SubdomainScanner.subdomains import Subdomains
+from Engine.scan import Scan
 
 c=console.Console() ## to beautify the console output we use rich print() function instead of defualt
 
@@ -80,7 +81,13 @@ def main():
   elif args.command=="endpoints":
     init(args.domain, args.subs, args.level, args.exclude, args.output, args.placeholder, args.quiet, args.retries,args.vulns)
 
-
+  elif args.command=="scanner":
+    _path={
+      "openredirect":"Engine/blueprints/openredirect.json",
+      "xss":"Engine/blueprints/xss.json",
+      "xss":"Engine/blueprints/xss.json",
+    }
+    Scan(args.url,_path[args.vulns])
 
 
 if __name__=='__main__':

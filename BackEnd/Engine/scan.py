@@ -1,7 +1,9 @@
-from .components.reader import Reader
+import re
+import json
+from rich import print_json
 from .components import req
 from .components import matcher
-import re
+from .components.reader import Reader
 
 class Scan:
     def __init__(self, url, template):
@@ -10,6 +12,10 @@ class Scan:
             print("Invalid URL")
             return
         self.template = template
+        print_json(self.main())
+
+
+    def main(self):
         r=Reader(self.template)
         # reader is returning the request data and the req method is using those and returning response data
         self.headers, self.payloads, self.method, self.redirects = r.reader()
@@ -17,9 +23,9 @@ class Scan:
         # reader will now return matchers from the template
         self.matchtype, self.part, self.key, self.regex,self.code,self.matchCondition = r.readMatchers()
         # after getting the response we will pass this response data to matcher class
-        matcher.Matchers(self.matchCondition,self.matchtype,self.part,self.key,self.regex,self.code,self.payloads,self.rbody,self.rdata)
-
-       
+        _json=matcher.Matchers(self.matchCondition,self.matchtype,self.part,self.key,self.regex,self.code,self.payloads,self.rbody,self.rdata).forAPI()
+        return json.dumps(_json, indent=4)
+        
 
     def isValidUrl(self):
         regex = re.compile(
@@ -31,6 +37,7 @@ class Scan:
             r'(?:/?|[/?]\S+)$', re.IGNORECASE)
         
         return re.match(regex, self.url) is not None
+
 
 
 

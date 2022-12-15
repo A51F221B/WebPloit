@@ -5,7 +5,7 @@ from SubdomainScanner.subdomains import Subdomains,Shodan
 from flask import Flask, request, jsonify, Response, redirect, url_for
 
 import logging
-__log__=logging.getLogger('werkzeug')
+__log__=logging.getLogger('werkzeug')  
 __log__.setLevel(logging.ERROR) # will record only errors
 
 file_handler = logging.FileHandler('server.log')
@@ -187,10 +187,11 @@ def scan():
         },500
 
     path={
-        'openredirect':'/Engine/blueprints/openredirect.json',
-        'xxe':'/Engine/blueprints/xxe.json'
+        'openredirect':'Engine/blueprints/openredirect.json',
+        'xxe':'Engine/blueprints/xxe.json'
     }
-    res=Scan(data['url'],path[data['vuln']])
+    res=Scan(data['url'],path[data['vuln']]).main()
+    print(res)
     return {
         "status": "success",
         "message": "Scan completed",
