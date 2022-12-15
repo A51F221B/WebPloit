@@ -28,10 +28,13 @@ class Shodan:
 
 
     def listtoString(self):
-        data=self.SearchDomains()
-        for subdomain in data['subdomains']:
-            self.subdomains.append(subdomain+'.'+self.url)
-        return '\n'.join(self.subdomains)
+        try:
+            data=self.SearchDomains()
+            for subdomain in data['subdomains']:
+                self.subdomains.append(subdomain+'.'+self.url)
+            return '\n'.join(self.subdomains)
+        except Exception as e:
+            pass
 
 
     def writeToFile(self):

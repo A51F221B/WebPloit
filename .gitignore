@@ -19,3 +19,4 @@ dict.txt
 /.fleet/
 BackEnd/EndpointsParser/output/
 .DS_Store
+server.log

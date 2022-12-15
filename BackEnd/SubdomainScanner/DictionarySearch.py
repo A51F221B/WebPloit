@@ -19,7 +19,7 @@ class Dictionary:
         self.init()
 
     # method to return list from text file
-    def wordlist(self, path: str = "wordlist/wordlist.txt"):
+    def wordlist(self, path: str = "wordlist/domain.txt"):
         with open(path, "r") as file:
             data = []
             for line in file:

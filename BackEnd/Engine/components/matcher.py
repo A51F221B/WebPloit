@@ -19,6 +19,7 @@ class Matchers:
         print(self.isVulnerablity())
 
 
+
     def regex_match(self,pattern: str, string: str) -> bool:
         """Check if a string matches a regular expression pattern.
         
@@ -117,5 +118,3 @@ class Matchers:
         elif self.matchCondition == "or":
             if any(conditions): 
                 return True
-        
-

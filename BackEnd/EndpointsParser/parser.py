@@ -65,7 +65,11 @@ def init(domain,subs=None,level=None,exclude=None,output=None,placeholder=None,q
         data=readFile(vulns)
         print(f"\u001b[32m[+] Potential endpoints for {vulns} are :\u001b[31m")
         ex=Extractor()
-        print(ex.find_strings(final_uris,data["patterns"]))
+        vulnurl=ex.find_strings(final_uris,data["patterns"])
+        # red color
+        print("\u001b[31m")
+        print('\n'.join(vulnurl))
+        return vulnurl
 
 
     if output:
@@ -74,7 +78,8 @@ def init(domain,subs=None,level=None,exclude=None,output=None,placeholder=None,q
     else:
         print(f"\u001b[32m[+] Output not saved in any file.txt\u001b[31m")
     
-
+    # return final_uris in json format
+    return final_uris
 
 
 
@@ -82,9 +87,8 @@ def readFile(file):
     paths={
         "openredirect":"EndpointsParser/profiles/redirect.json",
         "xss":"EndpointsParser/profiles/xss.json",
+        "xxe":"EndpointsParser/profiles/xxe.json",
     }
     with open(paths[file]) as json_file:
         data = json.loads(json_file.read())
         return data
-
- 

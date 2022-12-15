@@ -5,7 +5,6 @@ from EndpointsParser.parser import init
 from EndpointsParser.core import * 
 from SubdomainScanner.subdomains import Subdomains
 
-
 c=console.Console() ## to beautify the console output we use rich print() function instead of defualt
 
 
@@ -22,6 +21,7 @@ class Argparse():
       subdomain_parser=subparser.add_parser("subdomain",help="Subdomain Scanner")
       subdomain_parser.add_argument("-s","--subdomains",help="Find Subdomains of a website",action="store",type=str,required=True)
       subdomain_parser.add_argument("-a","--aggressive",help="Find Subdomains of a website",action="store_true",default=False)
+      subdomain_parser.add_argument("-u","--url",help="URL of the website",action="store",type=str)
 
       # for Endpoint Parser
       endpoint_parser=subparser.add_parser("endpoints",help="Endpoint Parser")
@@ -62,7 +62,20 @@ def main():
 
   #for subdomain enumeration
   if args.command=="subdomain":
-    Subdomains(args.subdomains, aggressive=False)
+    if args.subdomains:
+      if arg.validateURL(args.subdomains):
+        if args.subdomains.startswith("http://"):
+          args.subdomains=args.subdomains.replace("http://","")
+          Subdomains(args.subdomains,aggressive=False)
+        elif args.subdomains.startswith("https://"):
+          args.subdomains=args.subdomains.replace("https://","")
+          Subdomains(args.subdomains,aggressive=False)
+        elif args.aggressive:
+          Subdomains(args.subdomains,args.aggressive)
+      else:
+        c.print("[!] Invalid URL entered",style="bold red")
+        c.print("[>] Example : example.com or http://example.com",style="bold green")
+ 
   #for endpoint parsing
   elif args.command=="endpoints":
     init(args.domain, args.subs, args.level, args.exclude, args.output, args.placeholder, args.quiet, args.retries,args.vulns)

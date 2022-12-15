@@ -24,7 +24,7 @@ class Subdomains(DuckDuckGoEnum):
     def GetSubdomains(self):
         if self.aggressive:
             try:
-                Dictionary(self.url)
+                print(Dictionary(self.url))
             except Exception as e:
                 print(e)
         Shodan(self.url)
