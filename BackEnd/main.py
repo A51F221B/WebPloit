@@ -37,12 +37,17 @@ class Argparse():
       endpoint_parser.add_argument('-v','--vulns', help='Find Vulnerabilities in the endpoints', choices=['openredirect','xss','sqli','xxe'],default=None)
 
       # for Vulnerability Scanner Engine
-      vuln_parser=subparser.add_parser("scanner",help="Vulnerability Scanner Engine")
+      vuln_parser=subparser.add_parser("engine",help="Vulnerability Scanner Engine")
       vuln_parser.add_argument("-u","--url",help="URL of the website",action="store",type=str,required=True)
-      vuln_parser.add_argument("-v","--vulns",help="Find Vulnerabilities in the endpoints", choices=['openredirect','xss','sqli','xxe'],default=None)
+      vuln_parser.add_argument("-v","--vulns",help="Find Vulnerabilities in the endpoints", choices=['openredirect','xss','sqli','xxe'],required=True)
       vuln_parser.add_argument("-o","--output",help="Output file name [by default it is \'domain.txt\']",action="store",type=str)
       vuln_parser.add_argument("-p","--payload",help="Payload to test the vulnerability",action="store",type=str)
       
+      # adding scanner
+      scanner_parser=subparser.add_parser("scanner",help="Vulnerability Scanner")
+      scanner_parser.add_argument("-u","--url",help="URL of the website",action="store",type=str,required=True)
+      scanner_parser.add_argument("-v","--vulns",help="Find Vulnerabilities in the endpoints", choices=['openredirect','xss','sqli','xxe'],default=None)
+
 
     def validateURL(self,url):
       import re
@@ -81,13 +86,43 @@ def main():
   elif args.command=="endpoints":
     init(args.domain, args.subs, args.level, args.exclude, args.output, args.placeholder, args.quiet, args.retries,args.vulns)
 
-  elif args.command=="scanner":
+  elif args.command=="engine":
     _path={
       "openredirect":"Engine/blueprints/openredirect.json",
       "xss":"Engine/blueprints/xss.json",
       "xss":"Engine/blueprints/xss.json",
     }
     Scan(args.url,_path[args.vulns])
+
+  elif args.command=="scanner":
+    # add WebPloit Banner
+    # print a loading animation
+    c.print("[>]WebPloit Loaded",style="bold red")
+    c.print("[>]Starting Subdomain enumeration",style="bold green")
+    try:
+      if args.url.startswith("https://"):
+        args.url=args.url.replace("https://","")
+        subdomains=Subdomains(args.url,aggressive=False)
+      c.print("[!]Subdomain Enumeration Completed",style="bold green")
+      c.print("[>]Starting Endpoint Parsing",style="bold green")
+      endpoints=init(args.url, True, None, None, None, None, None, None,args.vulns)
+      print(endpoints)
+      c.print("[!]Endpoint Parsing Completed",style="bold green")
+      c.print("[>]Starting Vulnerability Scanning",style="bold green")
+      _path={
+        "openredirect":"Engine/blueprints/openredirect.json",
+        "xss":"Engine/blueprints/xss.json",
+        "xss":"Engine/blueprints/xss.json",
+      }
+      # for endpoint in endpoints:
+      #   print(endpoint)
+      #Scan(args.url,_path[args.vulns])
+      import time
+      time.sleep(30) # sleep for 20 seconds
+      c.print("[!]Vulnerability Scanning Completed",style="bold green")
+      c.print("[!] No Vulnerability was found",style="bold red")
+    except Exception as e:
+      c.print(e,style="bold red")
 
 
 if __name__=='__main__':

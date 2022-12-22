@@ -42,5 +42,5 @@ class Scan:
 
 
 
-# Scan("https://0a6f009c0403f516c1ec103200f50099.web-security-academy.net/product/stock","blueprints/xxe.json")
+# Scan("https://0a38006c04e66ad4c4b8e2d500c600dc.web-security-academy.net/product/stock","blueprints/xxe.json")
 #Scan("http://ptl-3983322e-008445f2.libcurl.so/redirect.php?uri=","blueprints/openredirect.json")
