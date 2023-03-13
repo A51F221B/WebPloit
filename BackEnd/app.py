@@ -1,7 +1,7 @@
 import json
 from Engine.scan import Scan
 from EndpointsParser.parser import init
-from SubdomainScanner.subdomains import Subdomains,Shodan
+from SubdomainScanner.subdomains import Subdomains
 from flask import Flask, request, jsonify, Response, redirect, url_for
 
 import logging
@@ -61,7 +61,7 @@ def subdomains():
             # try:
             #     subdomains = Shodan(data['url']).SearchDomains()
             # except:
-            subdomains = Subdomains(data['url'],aggressive).toJson()
+            subdomains = Subdomains(data["url"]).forAPI()
             return {
                 "status": "success",
                 "message": "Subdomains found",

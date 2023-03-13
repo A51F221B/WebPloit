@@ -5,9 +5,14 @@ from requests_html import HTMLSession
 
 
 class Search:
+    """
+    This class is used to scrape subdomains from Google, Bing and DuckDuckGo.
+    """
+
     def __init__(self, url):
         self.url = url
         self.subdomains = []
+
 
     @staticmethod
     def return_source_code(query):

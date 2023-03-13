@@ -21,7 +21,6 @@ class Argparse():
       # Subdomain Scanner parsing
       subdomain_parser=subparser.add_parser("subdomain",help="Subdomain Scanner")
       subdomain_parser.add_argument("-s","--subdomains",help="Find Subdomains of a website",action="store",type=str,required=True)
-      subdomain_parser.add_argument("-a","--aggressive",help="Find Subdomains of a website",action="store_true",default=False)
       subdomain_parser.add_argument("-u","--url",help="URL of the website",action="store",type=str)
 
       # for Endpoint Parser
@@ -72,57 +71,29 @@ def main():
       if arg.validateURL(args.subdomains):
         if args.subdomains.startswith("http://"):
           args.subdomains=args.subdomains.replace("http://","")
-          Subdomains(args.subdomains,aggressive=False)
+          Subdomains(args.subdomains).main()
         elif args.subdomains.startswith("https://"):
           args.subdomains=args.subdomains.replace("https://","")
-          Subdomains(args.subdomains,aggressive=False)
-        elif args.aggressive:
-          Subdomains(args.subdomains,args.aggressive)
+          Subdomains(args.subdomains).main()
       else:
         c.print("[!] Invalid URL entered",style="bold red")
         c.print("[>] Example : example.com or http://example.com",style="bold green")
  
-  #for endpoint parsing
-  elif args.command=="endpoints":
-    init(args.domain, args.subs, args.level, args.exclude, args.output, args.placeholder, args.quiet, args.retries,args.vulns)
 
-  elif args.command=="engine":
-    _path={
-      "openredirect":"Engine/blueprints/openredirect.json",
-      "xss":"Engine/blueprints/xss.json",
-      "xss":"Engine/blueprints/xss.json",
-    }
-    Scan(args.url,_path[args.vulns])
+  # #for endpoint parsing
+  # elif args.command=="endpoints":
+  #   init(args.domain, args.subs, args.level, args.exclude, args.output, args.placeholder, args.quiet, args.retries,args.vulns)
 
-  elif args.command=="scanner":
-    # add WebPloit Banner
-    # print a loading animation
-    c.print("[>]WebPloit Loaded",style="bold red")
-    c.print("[>]Starting Subdomain enumeration",style="bold green")
-    try:
-      if args.url.startswith("https://"):
-        args.url=args.url.replace("https://","")
-        subdomains=Subdomains(args.url,aggressive=False)
-      c.print("[!]Subdomain Enumeration Completed",style="bold green")
-      c.print("[>]Starting Endpoint Parsing",style="bold green")
-      endpoints=init(args.url, True, None, None, None, None, None, None,args.vulns)
-      print(endpoints)
-      c.print("[!]Endpoint Parsing Completed",style="bold green")
-      c.print("[>]Starting Vulnerability Scanning",style="bold green")
-      _path={
-        "openredirect":"Engine/blueprints/openredirect.json",
-        "xss":"Engine/blueprints/xss.json",
-        "xss":"Engine/blueprints/xss.json",
-      }
-      # for endpoint in endpoints:
-      #   print(endpoint)
-      #Scan(args.url,_path[args.vulns])
-      import time
-      time.sleep(30) # sleep for 20 seconds
-      c.print("[!]Vulnerability Scanning Completed",style="bold green")
-      c.print("[!] No Vulnerability was found",style="bold red")
-    except Exception as e:
-      c.print(e,style="bold red")
+  # elif args.command=="engine":
+  #   _path={
+  #     "openredirect":"Engine/blueprints/openredirect.json",
+  #     "xss":"Engine/blueprints/xss.json",
+  #     "xss":"Engine/blueprints/xss.json",
+  #   }
+  #   Scan(args.url,_path[args.vulns])
+
+  # elif args.command=="scanner":
+  #   pass
 
 
 if __name__=='__main__':
