@@ -23,11 +23,15 @@ class Requester:
                     responses[payload] = {"headers": dict(response.headers.items()), "status": response.status, "data": response.data}
             elif self.method == "POST":
                 for payload in self.payloads:
-                    p=urlparse(self.url)
+                    p=urlparse(self.url) #parsing the url
                     hostname=p.hostname
                     # adding hostname to the headers
                     self.headers['Host']=hostname
-                    response = http.request('POST', self.url, headers=self.headers, body=payload, redirect=self.redirects)
+                    try:
+                        response = http.request('POST', self.url, headers=self.headers, body=payload, redirect=self.redirects)
+                    except urllib3.exceptions.MaxRetryError as e: #incase if ssl error occurs
+                        http = urllib3.PoolManager(cert_reqs='CERT_NONE')
+                        response = http.request('POST', self.url, headers=self.headers, body=payload, redirect=self.redirects)
                     # # Convert the HTTPHeaderDict object to a dictionary before adding it to the responses
                     responses[payload] = {"headers": dict(response.headers.items()), "status": response.status, "data": response.data}
         except urllib3.exceptions.MaxRetryError as e:
@@ -58,3 +62,4 @@ class Requester:
             return responses, response.data
         except:
             return responses, None
+        

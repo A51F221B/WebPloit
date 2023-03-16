@@ -1,156 +1,142 @@
+
 import re
+from typing import Tuple, Union
+
 
 class Matchers:
+    def __init__(self, match_condition=None, match_type=None, part=None, key=None, regex=None, code=None, payloads=None,
+                 r_body=None, response_data=None,url=None):
+        self.match_condition = match_condition
+        self.match_type = match_type or []
+        self.part = part or []
+        self.key = key or []
+        self.regex = regex or []
+        self.code = code or []
+        self.payloads = payloads or []
+        self.r_body = r_body
+        self.response_data = response_data or {}
+        self.url=url
 
-    def __init__(self,matchCondition=None,matchtype=None,part=None,key=None,regex=None,code=None,payloads=None,rbody=None,responseData=None):
-        self.matchCondition=matchCondition
-        self.matchtype=matchtype
-        self.part=part
-        self.key=key
-        self.regex=regex
-        self.code=code
-        self.payloads=payloads
-        self.rbody=rbody
-        self.responseData=responseData
-       # print(self.headerMatch())
-        #print(self.statusCodeMatch())
-        #print(self.headerMatch())
-        #print(self.bodyMatch())
-        # print(self.isVulnerablity())
-        # pprint.pprint(self.forAPI())
-
-
-
-    def regex_match(self,pattern: str, string: str) -> bool:
-        """Check if a string matches a regular expression pattern.
-        
-        Arguments:
-            pattern: A string containing a regular expression pattern.
-            string: The string to match against the pattern.
-        
-        Returns:
-            True if the string matches the pattern, False otherwise.
-        """
+    def regex_match(self, pattern: str, string: str) -> bool:
         try:
-            # Compile the regular expression pattern
             regex = re.compile(pattern, re.MULTILINE | re.IGNORECASE)
-            
-            # Use the finditer() method to find matches in the string
-            matches = regex.finditer(string)
-            
-            # If the iterator contains any matches, return True
-            return any(matches)
-        except Exception as e:
-            # If an error occurred, print the error message and return False
-            print(e)
+            return any(regex.finditer(string))
+        except re.error:
+            return False
+
+    def isStatus(self) -> bool:
+        return 'status' in self.match_type
+
+    def isRegex(self) -> bool:
+        return 'regex' in self.match_type
+
+    def isBody(self) -> bool:
+        return 'body' in self.part
+
+    def isHeader(self) -> bool:
+        return 'header' in self.part
+
+    def statusCodeMatch(self) -> Union[None, Tuple[bool, dict]]:
+        if not self.isStatus():
+            return None
+
+        for payload in self.payloads:
+            response = self.response_data.get(payload)
+            if not response:
+                continue
+
+            status = response.get('status')
+            if not status:
+                continue
+
+            for codes in self.code:
+                if str(status) in codes:
+                    return True, {
+                        "payload": payload,
+                        "status": status,
+                        "matchtype": "status",
+                        "part": "status",
+                    }
+
+
+    def headerMatch(self) -> Union[None, Tuple[bool, dict]]:
+        if not self.isHeader():
+            return None
+
+        for payload in self.payloads:
+            response = self.response_data.get(payload)
+            if not response:
+                continue
+
+            headers = response.get('headers')
+            if not headers:
+                continue
+
+            for key in self.key:
+                header_value = headers.get(key)
+                if not header_value:
+                    continue
+
+                for r in self.regex:
+                    string = f'{key}:{header_value}'
+                    if self.regex_match(r, string):
+                        return True, {
+                            "payload": payload,
+                            "status": response['status'],
+                            "matchtype": "regex",
+                            "part": "header",
+                        }
+
+    def bodyMatch(self) -> Union[None, Tuple[bool, dict]]:
+        if not self.isBody():
+            return None
+
+        for payload in self.payloads:
+            response = self.response_data.get(payload)
+            if not response:
+                continue
+
+            data = response.get('data')
+            if not data:
+                continue
+
+            for r in self.regex:
+                if self.regex_match(r, str(data)):
+                    return True, {
+                        "payload": payload,
+                        "status": response['status'],
+                        "matchtype": "regex",
+                        "part": "body",
+                    }
+
+    def isVulnerablity(self) -> bool:
+        conditions = [self.statusCodeMatch(), self.headerMatch(), self.bodyMatch()]
+        conditions = [c for c in conditions if c is not None]  # remove None values
+        if self.match_condition == "and":
+            return all(conditions)
+        elif self.match_condition == "or":
+            return any(conditions)
+        else:
             return False
 
 
-    def isStatus(self):
-        for match in self.matchtype:
-            if match == 'status':
-                return True
-            
+    def forAPI(self) -> dict:
+        if not self.isVulnerablity():
+            return {"data": []}
 
+        print("\033[91m {}\033[00m".format("[!] Vulnerability Found"))
 
-    def isRegex(self):
-        for match in self.matchtype:
-            if match == 'regex':
-                return True
+        json_data = []
+        statusCodeMatch = self.statusCodeMatch()
+        headerMatch = self.headerMatch()
+        bodyMatch = self.bodyMatch()
 
+        if statusCodeMatch:
+            json_data.append(statusCodeMatch[1])
+        if headerMatch:
+            json_data.append(headerMatch[1])
+        if bodyMatch:
+            json_data.append(bodyMatch[1])
+        json_data.append({"url":self.url})
+        return {"data": json_data}
 
-
-    def isBody(self):
-        for match in self.part:
-            if match == 'body':
-                return True
-
-
-    def isHeader(self):
-        for match in self.part:
-            if match == 'header':
-                return True
-
-
-
-    def statusCodeMatch(self):
-        if self.isStatus():
-            for payload in self.payloads:
-                for key in self.responseData[payload]:
-                    if key == 'status':
-                        for code in self.code:
-                            for c in code:
-                                if self.responseData[payload][key] == c:
-                                    return True,{
-                                        "payload":payload,
-                                        "status":self.responseData[payload][key],
-                                        "matchtype":"status",
-                                        "part":"status",
-                                    }
-
-                        
-
-
-    def headerMatch(self):
-        if self.isHeader():
-            for payload in self.payloads:
-                for key in self.responseData[payload]:
-                    if key == 'headers':
-                        for k in self.key:
-                            if k in self.responseData[payload][key]:
-                                for r in self.regex:
-                                  string=f'{k}:{self.responseData[payload][key][k]}'
-                                  if self.regex_match(r, string):        
-                                    return True,{
-                                        "payload":payload,
-                                        "status":self.responseData[payload]['status'],
-                                        "matchtype":"regex",
-                                        "part":"header",
-                                    }
-                         
-
-    def bodyMatch(self):
-        if self.isBody():
-            for payload in self.payloads:
-                for key in self.responseData[payload]:
-                    if key == 'data':
-                        for r in self.regex:
-                            if self.regex_match(r, str(self.responseData[payload][key])):
-                                return True,{
-                                    "payload":payload,
-                                    "status":self.responseData[payload]['status'],
-                                    "matchtype":"regex",
-                                    "part":"body",
-                                }
-
-
-
-    def isVulnerablity(self):
-        conditions=[self.statusCodeMatch(),self.headerMatch(),self.bodyMatch()]
-        conditions = [c for c in conditions if c is not None] # remove None values
-        if self.matchCondition == "and":
-            if all(conditions):
-                return True
-        elif self.matchCondition == "or":
-            if any(conditions): 
-                return True
-
-
-    def forAPI(self):
-        # print in red color
-        print("\033[91m {}\033[00m" .format("[!]Vulnerablity Found"))
-        # print vulnerability information
-        json=[]
-        _json={}
-        if self.isVulnerablity():
-            if self.statusCodeMatch():
-                con,match=self.statusCodeMatch()
-                json.append(match)
-            if self.headerMatch():
-                con,match=self.headerMatch()
-                json.append(match)
-            if self.bodyMatch():
-                con,match=self.bodyMatch()
-                json.append(match)
-            _json['data']=json
-            return _json 

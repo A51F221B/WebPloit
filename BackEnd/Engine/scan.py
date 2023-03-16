@@ -12,8 +12,7 @@ class Scan:
             print("Invalid URL")
             return
         self.template = template
-        print_json(self.main())
-
+        # print_json(self.main())
 
     def main(self):
         r=Reader(self.template)
@@ -23,7 +22,7 @@ class Scan:
         # reader will now return matchers from the template
         self.matchtype, self.part, self.key, self.regex,self.code,self.matchCondition = r.readMatchers()
         # after getting the response we will pass this response data to matcher class
-        _json=matcher.Matchers(self.matchCondition,self.matchtype,self.part,self.key,self.regex,self.code,self.payloads,self.rbody,self.rdata).forAPI()
+        _json=matcher.Matchers(self.matchCondition,self.matchtype,self.part,self.key,self.regex,self.code,self.payloads,self.rbody,self.rdata,self.url).forAPI()
         return json.dumps(_json, indent=4)
         
 
@@ -44,3 +43,5 @@ class Scan:
 
 # Scan("https://0a38006c04e66ad4c4b8e2d500c600dc.web-security-academy.net/product/stock","blueprints/xxe.json")
 #Scan("http://ptl-3983322e-008445f2.libcurl.so/redirect.php?uri=","blueprints/openredirect.json")
+
+# Scan("https://0a9300b20367ec3dc10dbcbc005700b2.web-security-academy.net/product/stock","blueprints/xxe.json")
