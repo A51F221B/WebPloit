@@ -20,3 +20,6 @@ dict.txt
 BackEnd/EndpointsParser/output/
 .DS_Store
 server.log
+subdomains.csv
+*.db
+Database/

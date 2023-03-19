@@ -13,7 +13,7 @@ from .components.Shodan import Shodan
 class Subdomains:
     def __init__(self,url):
         self.url=url
-        self.db_conn = sqlite3.connect('subdomains.db')
+        self.db_conn = sqlite3.connect('././Database/subdomains.db')
         self.create_table_if_not_exists()
         # self.main()
         # print_json(json.dumps(self.forAPI()))

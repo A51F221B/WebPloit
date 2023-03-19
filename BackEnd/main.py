@@ -58,7 +58,7 @@ class Argparse():
       else:
           return False
 
-    
+
 
 
 def main():
@@ -81,8 +81,8 @@ def main():
  
 
   # #for endpoint parsing
-  # elif args.command=="endpoints":
-  #   init(args.domain, args.subs, args.level, args.exclude, args.output, args.placeholder, args.quiet, args.retries,args.vulns)
+  elif args.command=="endpoints":
+    init(args.domain, args.subs, args.level, args.exclude, args.output, args.placeholder, args.quiet, args.retries,args.vulns)
 
   # elif args.command=="engine":
   #   _path={
