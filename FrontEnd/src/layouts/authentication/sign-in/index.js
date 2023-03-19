@@ -1,13 +1,14 @@
 import { useState } from "react";
 
 // react-router-dom components
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 // @mui material components
 import Card from "@mui/material/Card";
 import Switch from "@mui/material/Switch";
 import Grid from "@mui/material/Grid";
 import MuiLink from "@mui/material/Link";
+import Alert from "@mui/material/Alert";
 
 // @mui icons
 import FacebookIcon from "@mui/icons-material/Facebook";
@@ -25,27 +26,62 @@ import BasicLayout from "layouts/authentication/components/BasicLayout";
 
 // Images
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
-// import Dashboard from "layouts/dashboard";
-// import bgImage from "assets/images/sign-in-bg-2.jpg"
-
-import { useNavigate } from "react-router-dom";
 
 function Basic() {
   const [rememberMe, setRememberMe] = useState(false);
-  const navigate = useNavigate()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
 
-  const signinClickHandler = () => {
-    navigate("/dashboard")
+  const [error, setError] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const handleSignIn = async (e) => {
+    e.preventDefault();
+    const API_URL = "http://localhost:5000";
   
+    try {
+      const response = await fetch(`${API_URL}/signin`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        if (data.status === "success") {
+          setSuccess(true);
+          setError(false);
+          setTimeout(() => {
+            navigate("/dashboard");
+          }, 2000);
+        } else {
+          setError(true);
+          setSuccess(false);
+        }
+      } else {
+        setError(true);
+        setSuccess(false);
+        setErrorMessage(data.message); // Set the error message from the server response
+      }
+    } catch (error) {
+      setError(true);
+      setSuccess(false);
+      setErrorMessage("An error occurred while signing in. Please try again later."); // Set a general error message
+    }
   };
   
-  const signupClickHandler = () => {
-    navigate("/authentication/sign-up")
-    
-    
-  };
+
+  
 
   return (
     <BasicLayout image={bgImage}>
@@ -64,7 +100,6 @@ function Basic() {
           <MDTypography variant="h4" fontWeight="medium" color="white" mt={1}>
             Sign in
           </MDTypography>
-          {/* <button onClick={signClickHandler}>Sign In</button> */}
           <Grid container spacing={3} justifyContent="center" sx={{ mt: 1, mb: 2 }}>
             <Grid item xs={2}>
               <MDTypography component={MuiLink} href="#" variant="body1" color="white">
@@ -84,12 +119,29 @@ function Basic() {
           </Grid>
         </MDBox>
         <MDBox pt={4} pb={3} px={3}>
+          {errorMessage && (
+            <Alert severity="error" onClose={() => setErrorMessage("")}>
+              {errorMessage}
+            </Alert>
+          )}
           <MDBox component="form" role="form">
             <MDBox mb={2}>
-              <MDInput type="email" label="Email" fullWidth />
+              <MDInput
+                type="email"
+                label="Email"
+                fullWidth
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </MDBox>
             <MDBox mb={2}>
-              <MDInput type="password" label="Password" fullWidth />
+              <MDInput
+                type="password"
+                label="Password"
+                fullWidth
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
             </MDBox>
             <MDBox display="flex" alignItems="center" ml={-1}>
               <Switch checked={rememberMe} onChange={handleSetRememberMe} />
@@ -104,7 +156,7 @@ function Basic() {
               </MDTypography>
             </MDBox>
             <MDBox mt={4} mb={1}>
-              <MDButton onClick={signinClickHandler} variant="gradient" color="info" fullWidth>
+              <MDButton onClick={handleSignIn} variant="gradient" color="info" fullWidth>
                 sign in
               </MDButton>
             </MDBox>
@@ -114,7 +166,6 @@ function Basic() {
                 <MDTypography
                   component={Link}
                   to="/authentication/sign-up"
-                  // onClick={signupClickHandler}
                   variant="button"
                   color="info"
                   fontWeight="medium"
@@ -129,6 +180,6 @@ function Basic() {
       </Card>
     </BasicLayout>
   );
-}
+ }  
 
 export default Basic;

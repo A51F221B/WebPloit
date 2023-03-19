@@ -3,16 +3,30 @@ import sqlite3
 from Engine.scan import Scan
 from EndpointsParser.parser import init
 from SubdomainScanner.subdomains import Subdomains
-from flask import Flask, request, jsonify, Response, redirect, url_for
+from flask import Flask, request, jsonify, Response, redirect, url_for,session
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from auth import db, User
+from flask_session import Session
+from flask_cors import CORS  # Import CORS
+from flask import make_response
+
 
 import logging
 
 app = Flask(__name__)
+CORS(app, resources={
+    r"/api/*": {"origins": "http://localhost:3000"},
+    r"/api/endpoints": {"origins": "http://localhost:3000"}
+}, supports_credentials=True)
+
+  # Enable CORS for all routes
+
 app.config['SECRET_KEY'] = 'mysecretkey'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/macvision/Documents/Webploit/BackEnd/Database/users.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+app.config['SESSION_TYPE'] = 'filesystem'  # Add this line to configure the session type
+Session(app)  # Add this line to initialize Flask-Session
 
 # Initialize Flask-Login
 login_manager = LoginManager()
@@ -37,9 +51,6 @@ def get_db():
     return conn
 
 
-
-from flask import current_app
-
 @app.before_first_request
 def setup_db():
     with app.app_context():
@@ -50,16 +61,42 @@ def setup_db():
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-@app.route('/signin', methods=['POST'])
+@app.route('/signin', methods=['POST', 'OPTIONS'])
 def signin():
+    if request.method == 'OPTIONS':
+        response = make_response("", 204)
+        response.headers["Access-Control-Allow-Origin"] = "http://localhost:3000"
+        response.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        return response
+
     data = request.get_json()
     user = User.query.filter_by(email=data['email']).first()
-
     if user and user.check_password(data['password']):
         login_user(user)
-        return jsonify({"status": "success", "message": "Logged in successfully"}), 200
+        session['user_id'] = user.id  # Store user_id in session
+        response = jsonify({"status": "success", "message": "Logged in successfully"})
+        response.headers["Access-Control-Allow-Origin"] = "http://localhost:3000" # Add the CORS header
+        return response, 200
     else:
-        return jsonify({"status": "error", "message": "Invalid email or password"}), 401
+        response = jsonify({"status": "error", "message": "Invalid email or password"})
+        response.headers["Access-Control-Allow-Origin"] = "http://localhost:3000" # Add the CORS header
+        response.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+
+
+        return response, 401
+
+@app.route('/signout', methods=['POST'])
+@login_required
+def signout():   
+    logout_user()
+    session.pop('user_id', None)  # Remove user_id from session
+    return jsonify({"status": "success", "message": "Logged out successfully"}), 200
+
+    
 
 @app.route('/signup', methods=['POST'])
 def signup():
@@ -70,7 +107,7 @@ def signup():
     user = User.query.filter_by(email=email).first()
     if user:
         return jsonify({"status": "error", "message": "Email already exists"}), 409
-
+    
     new_user = User(email=email)
     new_user.set_password(password)
 
@@ -82,11 +119,13 @@ def signup():
 
 HTTP_METHODS = ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH']
 
+
 @app.route('/', methods=HTTP_METHODS)
 def index():
     return redirect(url_for('base'))
 
 @app.route('/base', methods=HTTP_METHODS)
+@login_required
 def base():
     with open('version.conf') as f:
         version = f.read()
@@ -219,16 +258,19 @@ def endpoints():
             retries=values['retries'],
             vulns=values['vulns']
         )
-        return {
+        response = make_response({
             "status": "success",
             "message": "Endpoints found",
             "data": data
-        },200
+        },200)
+        response.headers["Access-Control-Allow-Origin"] = "http://localhost:3000"  # Add the header
+        return response
     except Exception as E:
         return {
             "status" : "error",
             "Details" : f'Invalid Request. Error: {E}'
         }, 500
+
     
      
 
