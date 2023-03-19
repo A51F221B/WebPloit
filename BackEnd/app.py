@@ -14,10 +14,8 @@ from flask import make_response
 import logging
 
 app = Flask(__name__)
-CORS(app, resources={
-    r"/api/*": {"origins": "http://localhost:3000"},
-    r"/api/endpoints": {"origins": "http://localhost:3000"}
-}, supports_credentials=True)
+CORS(app, supports_credentials=True)  # Enable CORS for all routes with credentials support
+
 
   # Enable CORS for all routes
 
@@ -104,8 +102,12 @@ def signup():
     email = data['email']
     password = data['password']
 
+    print(f"Signup attempt for email: {email}")  # Add this line
+
     user = User.query.filter_by(email=email).first()
+
     if user:
+        print(f"User already exists: {user}")  # Add this line
         return jsonify({"status": "error", "message": "Email already exists"}), 409
     
     new_user = User(email=email)
