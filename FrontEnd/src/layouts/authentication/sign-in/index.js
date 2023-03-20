@@ -67,18 +67,22 @@ function Basic() {
         } else {
           setError(true);
           setSuccess(false);
+          setErrorMessage(data.message);
         }
       } else {
         setError(true);
         setSuccess(false);
-        setErrorMessage(data.message); // Set the error message from the server response
+        setErrorMessage(data.message);
       }
     } catch (error) {
       setError(true);
       setSuccess(false);
-      setErrorMessage("An error occurred while signing in. Please try again later."); // Set a general error message
+      setErrorMessage("An error occurred while signing in. Please try again later.");
     }
   };
+  
+
+  
   
 
   
@@ -118,12 +122,14 @@ function Basic() {
             </Grid>
           </Grid>
         </MDBox>
-        <MDBox pt={4} pb={3} px={3}>
-          {errorMessage && (
+        {errorMessage && (
+          <MDBox px={3} pb={2}>
             <Alert severity="error" onClose={() => setErrorMessage("")}>
               {errorMessage}
             </Alert>
-          )}
+          </MDBox>
+        )}
+        <MDBox pt={2} pb={3} px={3}>
           <MDBox component="form" role="form">
             <MDBox mb={2}>
               <MDInput
@@ -180,6 +186,7 @@ function Basic() {
       </Card>
     </BasicLayout>
   );
+  
  }  
 
 export default Basic;
