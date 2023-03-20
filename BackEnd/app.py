@@ -311,7 +311,7 @@ def scan():
         "sqli": "Engine/blueprints/sqli.json"
     }
     res = Scan(data['url'], path[data['vuln']]).main()
-    print(res)
+   # print(res)
 
     # Parse the JSON string returned by the main function
     res_data = json.loads(res)

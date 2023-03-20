@@ -122,7 +122,7 @@ class Matchers:
 
     def forAPI(self) -> dict:
         if not self.isVulnerablity():
-            return {"data": []}
+            return {"data": "No Vulnerability Found"}
 
         print("\033[91m {}\033[00m".format("[!] Vulnerability Found"))
 
