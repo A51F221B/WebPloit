@@ -19,7 +19,11 @@ class Requester:
                 if self.method == "GET":
                     full_url = f"{self.url}{payload}"
                     print(full_url)
-                    response = http.request('GET', full_url, headers=self.headers, redirect=self.redirects, timeout=10)
+                    try:
+                        response = http.request('GET', full_url, headers=self.headers, redirect=self.redirects, timeout=10)
+                    except urllib3.exceptions.MaxRetryError as e:
+                        http = urllib3.PoolManager(cert_reqs='CERT_NONE')
+                        response = http.request('GET', full_url, headers=self.headers, redirect=self.redirects, timeout=10)
 
                 elif self.method == "POST":
                     p = urlparse(self.url)

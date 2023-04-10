@@ -14,7 +14,7 @@
         }
     },
     "stopAtMatch": true,
-    "matchers-condition": "and",
+    "matchers-condition": "or",
     "matches": [
         {
             "type": "regex",

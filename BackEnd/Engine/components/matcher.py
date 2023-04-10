@@ -4,25 +4,25 @@ from typing import Tuple, Union
 
 
 class Matchers:
-    def __init__(self, match_condition=None, match_type=None, part=None, key=None, regex=None, code=None, payloads=None,
-                 r_body=None, response_data=None,url=None):
+    def __init__(self, match_condition=None, match_type=None, part=None, key=None, regex=None, code=None, payloads=None, r_body=None, response_data=None, url=None):
         self.match_condition = match_condition
         self.match_type = match_type or []
         self.part = part or []
         self.key = key or []
-        self.regex = regex or []
         self.code = code or []
         self.payloads = payloads or []
         self.r_body = r_body
         self.response_data = response_data or {}
-        self.url=url
+        self.url = url
+        self.regex = [re.compile(r, re.MULTILINE | re.IGNORECASE) for r in regex] if regex else []  # update this line
 
-    def regex_match(self, pattern: str, string: str) -> bool:
+
+    def regex_match(self, pattern: re.Pattern, string: str) -> bool:
         try:
-            regex = re.compile(pattern, re.MULTILINE | re.IGNORECASE)
-            return any(regex.finditer(string))
+            return any(pattern.finditer(string))
         except re.error:
             return False
+
 
     def isStatus(self) -> bool:
         return 'status' in self.match_type
@@ -94,10 +94,11 @@ class Matchers:
 
         for payload in self.payloads:
             response = self.response_data.get(payload)
+            print("response",response)
             if not response:
                 continue
 
-            data = response.get('data')
+            data = response.get('data')       
             if not data:
                 continue
 
