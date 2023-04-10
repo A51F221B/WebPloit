@@ -139,4 +139,3 @@ class Matchers:
             json_data.append(bodyMatch[1])
         json_data.append({"url":self.url})
         return {"data": json_data}
-

@@ -299,7 +299,7 @@ def scan():
             "status": "error",
             "message": "No vulnerability specified"
         }, 500
-    if data['vuln'] not in ['openredirect','xxe','sqli']:
+    if data['vuln'] not in ['openredirect','xxe','sqli','sqlipost']:
         return {
             "status": "error",
             "message": "Invalid vulnerability specified"
@@ -308,7 +308,8 @@ def scan():
     path = {
         'openredirect': 'Engine/blueprints/openredirect.json',
         'xxe': 'Engine/blueprints/xxe.json',
-        "sqli": "Engine/blueprints/sqli.json"
+        "sqli": "Engine/blueprints/sqli.json",
+        "sqlipost": "Engine/blueprints/sqlipost.json"
     }
     res = Scan(data['url'], path[data['vuln']]).main()
    # print(res)

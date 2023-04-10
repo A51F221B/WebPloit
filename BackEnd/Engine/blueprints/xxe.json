@@ -25,6 +25,8 @@
             "regex":"root:.*:0:0"
         },
         {
+            "type":"regex",
+            "part": "body",
             "regex":"XML parser exited with error"
         }
     ],

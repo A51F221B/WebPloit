@@ -11,55 +11,47 @@ class Requester:
         self.redirects = redirects
 
     def req(self):
-        # using urllib3 to send requests
-        http = urllib3.PoolManager() #cert_reqs='CERT_NONE'if cert issue
+        http = urllib3.PoolManager()
         responses = {}
-        try:
-            if self.method == "GET":
-                for payload in self.payloads:
-                    full_url = f"{self.url}{payload}"
-                    response = http.request('GET', full_url, headers=self.headers, redirect=self.redirects,timeout=10)
-                    # Convert the HTTPHeaderDict object to a dictionary before adding it to the responses
-                    responses[payload] = {"headers": dict(response.headers.items()), "status": response.status, "data": response.data}
-            elif self.method == "POST":
-                for payload in self.payloads:
-                    p=urlparse(self.url) #parsing the url
-                    hostname=p.hostname
-                    # adding hostname to the headers
-                    self.headers['Host']=hostname
-                    try:
-                        response = http.request('POST', self.url, headers=self.headers, body=payload, redirect=self.redirects,timeout=10)
-                    except urllib3.exceptions.MaxRetryError as e: #incase if ssl error occurs
-                        http = urllib3.PoolManager(cert_reqs='CERT_NONE')
-                        response = http.request('POST', self.url, headers=self.headers, body=payload, redirect=self.redirects,timeout=10)
-                    # # Convert the HTTPHeaderDict object to a dictionary before adding it to the responses
-                    responses[payload] = {"headers": dict(response.headers.items()), "status": response.status, "data": response.data}
-        except urllib3.exceptions.MaxRetryError as e:
-            pass   
-        except urllib3.exceptions.SSLError as e:
-            # Handle SSLError exceptions here
-            print("An SSL error occurred:", e)
-        except urllib3.exceptions.RequestError as e:
-            # Handle RequestError exceptions here
-            print("A request error occurred:", e)
-        except urllib3.exceptions.TimeoutError as e:
-            # Handle TimeoutError exceptions here
-            print("The request timed out:", e)
-        except urllib3.exceptions.ProtocolError as e:
-            # Handle ProtocolError exceptions here
-            print("A protocol error occurred:", e)
-        except urllib3.exceptions.DecodeError as e:
-            # Handle DecodeError exceptions here
-            print("An error occurred while decoding the response:", e)
-        except urllib3.exceptions.SSLError as e:
-            print("An SSL certificate verification error occurred:", e.reason)
 
-        except Exception as e:
-            # Handle any other exceptions here
-            print("An unknown error occurred:", e)
-        # return responses and body
+        for payload in self.payloads:
+            try:
+                if self.method == "GET":
+                    full_url = f"{self.url}{payload}"
+                    print(full_url)
+                    response = http.request('GET', full_url, headers=self.headers, redirect=self.redirects, timeout=10)
+
+                elif self.method == "POST":
+                    p = urlparse(self.url)
+                    hostname = p.hostname
+                    self.headers['Host'] = hostname
+
+                    try:
+                        response = http.request('POST', self.url, headers=self.headers, body=payload, redirect=self.redirects, timeout=10)
+                    except urllib3.exceptions.MaxRetryError as e:
+                        http = urllib3.PoolManager(cert_reqs='CERT_NONE')
+                        response = http.request('POST', self.url, headers=self.headers, body=payload, redirect=self.redirects, timeout=10)
+
+                responses[payload] = {"headers": dict(response.headers.items()), "status": response.status, "data": response.data}
+
+            except urllib3.exceptions.MaxRetryError as e:
+                pass
+            except urllib3.exceptions.SSLError as e:
+                print("An SSL error occurred:", e)
+            except urllib3.exceptions.RequestError as e:
+                print("A request error occurred:", e)
+            except urllib3.exceptions.TimeoutError as e:
+                print("The request timed out:", e)
+            except urllib3.exceptions.ProtocolError as e:
+                print("A protocol error occurred:", e)
+            except urllib3.exceptions.DecodeError as e:
+                print("An error occurred while decoding the response:", e)
+            except urllib3.exceptions.SSLError as e:
+                print("An SSL certificate verification error occurred:", e.reason)
+            except Exception as e:
+                print("An unknown error occurred:", e)
+
         try:
             return responses, response.data
         except:
             return responses, None
-        
