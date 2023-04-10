@@ -57,7 +57,7 @@ class Matchers:
                         "matchtype": "status",
                         "part": "status",
                     }
-
+        return False, None
 
     def headerMatch(self) -> Union[None, Tuple[bool, dict]]:
         if not self.isHeader():
@@ -86,6 +86,7 @@ class Matchers:
                             "matchtype": "regex",
                             "part": "header",
                         }
+        return False, None
 
     def bodyMatch(self) -> Union[None, Tuple[bool, dict]]:
         if not self.isBody():
@@ -108,16 +109,20 @@ class Matchers:
                         "matchtype": "regex",
                         "part": "body",
                     }
+        return False, None
+
 
     def isVulnerablity(self) -> bool:
         conditions = [self.statusCodeMatch(), self.headerMatch(), self.bodyMatch()]
-        conditions = [c for c in conditions if c is not None]  # remove None values
+        conditions = [c[0] for c in conditions if c is not None]  # remove None values and get status
+        print(conditions)
         if self.match_condition == "and":
             return all(conditions)
         elif self.match_condition == "or":
             return any(conditions)
         else:
             return False
+
 
 
     def forAPI(self) -> dict:
