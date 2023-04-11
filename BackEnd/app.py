@@ -83,8 +83,6 @@ def signin():
         response.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
         response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
         response.headers["Access-Control-Allow-Credentials"] = "true"
-
-
         return response, 401
 
 @app.route('/signout', methods=['POST'])
@@ -275,8 +273,6 @@ def endpoints():
 
     
      
-
-
 @app.route('/api/scan', methods=['POST'])
 def scan():
     content_type = request.headers.get('Content-Type')
@@ -322,3 +318,35 @@ def scan():
         "message": "Scan completed",
         "data": res_data
     }, 200
+
+
+# Analytics 
+@app.route("/total_scans", methods=["GET"])
+def get_total_scans():
+    return jsonify({"total_scans": Scan.get_total_scan()})
+
+
+@app.route('/total_users', methods=['GET'])
+def get_total_users():
+    total_users = User.query.count()
+    return jsonify({"total_users": total_users})
+
+@app.route('/total_revenue', methods=['GET'])
+def get_total_revenue():
+    return jsonify({"total_revenue": 0})
+
+@app.route('/total_followers', methods=['GET'])
+def get_total_followers():
+    return jsonify({"total_followers": 0})
+
+
+@app.route('/scan_durations', methods=['GET'])
+def get_scan_durations():
+    conn = sqlite3.connect("Database/scan.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM scan_durations")
+    result = cursor.fetchall()
+    conn.close()
+
+    scan_durations = [{"scan_id": scan_id, "duration": duration} for scan_id, duration in result]
+    return jsonify({"scan_durations": scan_durations})

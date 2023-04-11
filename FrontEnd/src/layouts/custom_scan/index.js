@@ -57,6 +57,7 @@ function Custom_scan() {
     }
   };
 
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -88,6 +89,40 @@ function Custom_scan() {
                     }
                     label="XML External Entity (XXE)"
                   />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={vulnerabilities.sqli || false}
+                        onChange={handleVulnerabilityChange}
+                        name="sqli"
+                        color="primary"
+                      />
+                    }
+                    label="SQL injection (SQLi)"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={vulnerabilities.sqlipost || false}
+                        onChange={handleVulnerabilityChange}
+                        name="sqlipost"
+                        color="primary"
+                      />
+                    }
+                    label="SQLi (POST)"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={vulnerabilities.openredirect || false}
+                        onChange={handleVulnerabilityChange}
+                        name="openredirect"
+                        color="primary"
+                      />
+                    }
+                    label="Open Redirect"
+                  />
+
                   {/* ... */}
                   {/* (your other checkboxes) */}
                   {/* ... */}
@@ -104,16 +139,17 @@ function Custom_scan() {
                     </MDTypography>
                   </div>
                 )}
-                <ScanDetails results={results} />
+                {results && Object.keys(results).length > 0 && (
+                  <ScanDetails results={results} />
+                )}
               </div>
             </Card>
           </Grid>
         </Grid>
       </MDBox>
     </DashboardLayout>
- 
-
   );
+
   
   
 }

