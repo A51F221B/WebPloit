@@ -11,7 +11,7 @@ function ScanDetails({ results }) {
     return null;
   }
 
-  if (results.data === "No Vulnerability Found") {
+  if (results.vulnerability === false) {
     return (
       <Box sx={{ mt: 3, p: 2, bgcolor: "success.light", borderRadius: 1 }}>
         <Typography variant="h6" gutterBottom>
@@ -24,33 +24,39 @@ function ScanDetails({ results }) {
 
   const exportPDF = () => {
     const doc = new jsPDF();
-    const tableRows = results.data.map((detail) => {
-      return [
-        detail.part ? `Part: ${detail.part}` : "",
-        detail.matchtype ? `Match Type: ${detail.matchtype}` : "",
-        detail.payload ? `Payload: ${detail.payload}` : "",
-        detail.url ? `URL: ${detail.url}` : "",
-        detail.status ? `Status: ${detail.status}` : "",
-      ];
-    });
-  
-    // custom styles for each column
-    const styles = {
-      0: { columnWidth: 70 },
-      1: { columnWidth: 80 },
-      2: { columnWidth: 50 },
-      3: { columnWidth: 15 },
-      4: { columnWidth: 40 },
-    };
     
+    const tableRows = [
+      ["Identity", results.identity || ""],
+      ["Severity", results.severity || ""],
+      ["Info", results.info || ""],
+      ["URL", results.url || ""],
+      ["Header Match", results.header_match !== undefined ? (results.header_match ? "Yes" : "No") : ""],
+      ["Body Match", results.body_match !== undefined ? (results.body_match ? "Yes" : "No") : ""],
+      ["Status Code Match", results.status_code_match !== undefined ? (results.status_code_match ? "Yes" : "No") : ""],
+    ];
+
     doc.autoTable({
-      head: [["Part", "Match Type", "Payload", "URL", "Status"]],
+      theme: "grid",
+      tableWidth: "wrap",
       body: tableRows,
-      styles, // pass the styles object as an option
     });
+
     doc.save("scan_results.pdf");
   };
-  
+
+  const csvData = [
+    ["Identity", "Severity", "Info", "URL", "Header Match", "Body Match", "Status Code Match"],
+    [
+      results.identity || "",
+      results.severity || "",
+      results.info || "",
+      results.url || "",
+      results.header_match !== undefined ? (results.header_match ? "Yes" : "No") : "",
+      results.body_match !== undefined ? (results.body_match ? "Yes" : "No") : "",
+      results.status_code_match !== undefined ? (results.status_code_match ? "Yes" : "No") : "",
+    ],
+  ];
+
   
 
   return (
@@ -58,55 +64,57 @@ function ScanDetails({ results }) {
       <Typography variant="h6" gutterBottom>
         Scan Details
       </Typography>
-          <Box sx={{ mb: 2 }}>
-      <CSVLink
-        data={results.data}
-        filename="scan_results.csv"
-        style={{ marginRight: "8px" }}
-      >
-        <MDButton variant="contained" color="primary" size="small">
-          Export to CSV
-        </MDButton>
-      </CSVLink>
-      <MDButton
-        variant="contained"
-        color="primary"
-        size="small"
-        onClick={exportPDF}
-      >
-        Export to PDF
-      </MDButton>
-    </Box>
-
-      {results.data.map((detail, index) => (
-        <Box
-          key={index}
-          sx={{
-            mt: 2,
-            p: 2,
-            borderRadius: 1,
-            bgcolor: detail.status === 200 ? "success.light" : "error.light",
-          }}
+      <Box sx={{ mb: 2 }}>
+        <CSVLink
+          data={csvData}
+          filename="scan_results.csv"
+          style={{ marginRight: "8px" }}
         >
+          <MDButton variant="contained" color="primary" size="small">
+            Export to CSV
+          </MDButton>
+        </CSVLink>
+        <MDButton
+          variant="contained"
+          color="primary"
+          size="small"
+          onClick={exportPDF}
+        >
+          Export to PDF
+        </MDButton>
+      </Box>
+      <Box sx={{ mt: 2, p: 2, borderRadius: 1, bgcolor: results.vulnerability ? "error.light" : "success.light" }}>
+        <Typography variant="body1" fontWeight="bold">
+          Identity: {results.identity || ""}
+        </Typography>
+        <Typography variant="body1" fontWeight="bold">
+          Severity: {results.severity || ""}
+        </Typography>
+        <Typography variant="body1" fontWeight="bold">
+          Info: {results.info || ""}
+        </Typography>
+        <Typography variant="body1" fontWeight="bold">
+          URL: {results.url || ""}
+        </Typography>
+        {results.header_match !== undefined && (
           <Typography variant="body1" fontWeight="bold">
-            {detail.part ? `Part: ${detail.part}` : ""}
+            Header Match: {results.header_match ? "Yes" : "No"}
           </Typography>
+        )}
+        {results.body_match !== undefined && (
           <Typography variant="body1" fontWeight="bold">
-            {detail.matchtype ? `Match Type: ${detail.matchtype}` : ""}
+            Body Match: {results.body_match ? "Yes" : "No"}
           </Typography>
+        )}
+        {results.status_code_match !== undefined && (
           <Typography variant="body1" fontWeight="bold">
-            {detail.payload ? `Payload: ${detail.payload}` : ""}
+            Status Code Match: {results.status_code_match ? "Yes" : "No"}
           </Typography>
-          <Typography variant="body1" fontWeight="bold">
-            {detail.url ? `URL: ${detail.url}` : ""}
-          </Typography>
-          <Typography variant="body1" fontWeight="bold">
-            {detail.status ? `Status: ${detail.status}` : ""}
-          </Typography>
-        </Box>
-      ))}
+        )}
+      </Box>
     </Box>
   );
+  
 }
 
 export default ScanDetails;

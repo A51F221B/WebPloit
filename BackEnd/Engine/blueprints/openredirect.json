@@ -1,7 +1,7 @@
 {
     "id": "Open Redirect",
     "severity": "low",
-    "info":"An Open Redirect vulnerability allows an attacker to redirect a user to an arbitrary website through a vulnerable application, often used for phishing attacks",
+    "info":"An Open Redirect vulnerability allows an attacker to redirect a user to an arbitrary website",
     "url" : "",
     "request": {
         "path": "/",

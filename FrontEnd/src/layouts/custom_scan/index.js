@@ -48,6 +48,7 @@ function Custom_scan() {
       if (data.status === "success") {
         setResults(data.data);
       } else {
+        setMessage("No vulnerability found.");
         setResults(null);
       }
     } catch (error) {
@@ -56,8 +57,7 @@ function Custom_scan() {
       setResults(null);
     }
   };
-
-
+  
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -122,7 +122,7 @@ function Custom_scan() {
                     }
                     label="Open Redirect"
                   />
-
+  
                   {/* ... */}
                   {/* (your other checkboxes) */}
                   {/* ... */}
@@ -139,7 +139,7 @@ function Custom_scan() {
                     </MDTypography>
                   </div>
                 )}
-                {results && Object.keys(results).length > 0 && (
+                {results && (
                   <ScanDetails results={results} />
                 )}
               </div>
@@ -147,9 +147,11 @@ function Custom_scan() {
           </Grid>
         </Grid>
       </MDBox>
+      <Footer />
     </DashboardLayout>
   );
-
+  
+  
   
   
 }
