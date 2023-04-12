@@ -33,7 +33,9 @@ function ScanDetails({ results }) {
       ["Header Match", results.header_match !== undefined ? (results.header_match ? "Yes" : "No") : ""],
       ["Body Match", results.body_match !== undefined ? (results.body_match ? "Yes" : "No") : ""],
       ["Status Code Match", results.status_code_match !== undefined ? (results.status_code_match ? "Yes" : "No") : ""],
+      ["Vulnerability", results.vulnerability !== undefined ? (results.vulnerability ? "Yes" : "No") : ""],
     ];
+    
 
     doc.autoTable({
       theme: "grid",
@@ -45,17 +47,20 @@ function ScanDetails({ results }) {
   };
 
   const csvData = [
-    ["Identity", "Severity", "Info", "URL", "Header Match", "Body Match", "Status Code Match"],
+    ["Identity", "Severity", "Info", "URL", "Header Match", "Body Match", "Status Code Match", "Vulnerability"],
     [
       results.identity || "",
+      results.vulnerability !== undefined ? (results.vulnerability ? "Yes" : "No") : "",
       results.severity || "",
       results.info || "",
       results.url || "",
       results.header_match !== undefined ? (results.header_match ? "Yes" : "No") : "",
       results.body_match !== undefined ? (results.body_match ? "Yes" : "No") : "",
       results.status_code_match !== undefined ? (results.status_code_match ? "Yes" : "No") : "",
+
     ],
   ];
+  
 
   
 
@@ -87,6 +92,11 @@ function ScanDetails({ results }) {
         <Typography variant="body1" fontWeight="bold">
           Identity: {results.identity || ""}
         </Typography>
+        {results.vulnerability !== undefined && (
+          <Typography variant="body1" fontWeight="bold">
+            Vulnerability: {results.vulnerability ? "Yes" : "No"}
+          </Typography>
+        )}
         <Typography variant="body1" fontWeight="bold">
           Severity: {results.severity || ""}
         </Typography>
@@ -110,7 +120,9 @@ function ScanDetails({ results }) {
           <Typography variant="body1" fontWeight="bold">
             Status Code Match: {results.status_code_match ? "Yes" : "No"}
           </Typography>
+          
         )}
+
       </Box>
     </Box>
   );
