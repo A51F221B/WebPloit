@@ -5,6 +5,16 @@ import { CSVLink } from "react-csv";
 import MDButton from "components/MDButton";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from "@mui/material";
+
 
 function ScanDetails({ results }) {
   if (!results) {
@@ -62,8 +72,6 @@ function ScanDetails({ results }) {
   ];
   
 
-  
-
   return (
     <Box sx={{ mt: 3 }}>
       <Typography variant="h6" gutterBottom>
@@ -88,44 +96,67 @@ function ScanDetails({ results }) {
           Export to PDF
         </MDButton>
       </Box>
-      <Box sx={{ mt: 2, p: 2, borderRadius: 1, bgcolor: results.vulnerability ? "error.light" : "success.light" }}>
-        <Typography variant="body1" fontWeight="bold">
-          Identity: {results.identity || ""}
-        </Typography>
-        {results.vulnerability !== undefined && (
-          <Typography variant="body1" fontWeight="bold">
-            Vulnerability: {results.vulnerability ? "Yes" : "No"}
-          </Typography>
-        )}
-        <Typography variant="body1" fontWeight="bold">
-          Severity: {results.severity || ""}
-        </Typography>
-        <Typography variant="body1" fontWeight="bold">
-          Info: {results.info || ""}
-        </Typography>
-        <Typography variant="body1" fontWeight="bold">
-          URL: {results.url || ""}
-        </Typography>
-        {results.header_match !== undefined && (
-          <Typography variant="body1" fontWeight="bold">
-            Header Match: {results.header_match ? "Yes" : "No"}
-          </Typography>
-        )}
-        {results.body_match !== undefined && (
-          <Typography variant="body1" fontWeight="bold">
-            Body Match: {results.body_match ? "Yes" : "No"}
-          </Typography>
-        )}
-        {results.status_code_match !== undefined && (
-          <Typography variant="body1" fontWeight="bold">
-            Status Code Match: {results.status_code_match ? "Yes" : "No"}
-          </Typography>
-          
-        )}
-
-      </Box>
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} aria-label="scan details table">
+          <TableHead>
+            <TableRow sx={{ bgcolor: "primary.main" }}>
+              <TableCell sx={{ color: "common.white", fontWeight: "bold" }}>Parameter</TableCell>
+              <TableCell sx={{ color: "common.white", fontWeight: "bold" }}>Value</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow>
+              <TableCell sx={{ fontWeight: "bold" }}>Identity</TableCell>
+              <TableCell>{results.identity || ""}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell sx={{ fontWeight: "bold" }}>Severity</TableCell>
+              <TableCell>{results.severity || ""}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell sx={{ fontWeight: "bold" }}>Info</TableCell>
+              <TableCell>{results.info || ""}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell sx={{ fontWeight: "bold" }}>URL</TableCell>
+              <TableCell>{results.url || ""}</TableCell>
+            </TableRow>
+            {results.header_match !== undefined && (
+              <TableRow>
+                <TableCell sx={{ fontWeight: "bold" }}>Header Match</TableCell>
+                <TableCell>{results.header_match ? "Yes" : "No"}</TableCell>
+              </TableRow>
+            )}
+            {results.body_match !== undefined && (
+              <TableRow>
+                <TableCell sx={{ fontWeight: "bold" }}>Body Match</TableCell>
+                <TableCell>{results.body_match ? "Yes" : "No"}</TableCell>
+              </TableRow>
+            )}
+            {results.status_code_match !== undefined && (
+              <TableRow>
+                <TableCell sx={{ fontWeight: "bold" }}>Status Code Match</TableCell>
+                <TableCell>{results.status_code_match ? "Yes" : "No"}</TableCell>
+              </TableRow>
+            )}
+            {results.vulnerability !== undefined && (
+              <TableRow>
+                <TableCell sx={{ fontWeight: "bold" }}>Vulnerability</TableCell>
+                <TableCell>{results.vulnerability ? "Yes" : "No"}</TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </Box>
   );
+  
+  
+  
+              
+  
+  
+  
   
 }
 
