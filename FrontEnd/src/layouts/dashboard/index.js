@@ -12,6 +12,7 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
 import ReportsLineChart from "examples/Charts/LineCharts/ReportsLineChart";
 import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
+import ScanDurationChart from "./ScanDurationChart";
 
 // Data
 import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
@@ -64,7 +65,7 @@ return (
             <ComplexStatisticsCard
               color="dark"
               icon="radar"
-              title="Scans"
+              title="Total Scans"
               count={totalScans}
               percentage={{
                 color: "success",
@@ -78,7 +79,7 @@ return (
           <MDBox mb={1.5}>
             <ComplexStatisticsCard
               icon="leaderboard"
-              title="Today's Users"
+              title="Total Users"
               count={totalUsers}
               percentage={{
                 color: "success",

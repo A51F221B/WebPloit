@@ -18,7 +18,6 @@ class Requester:
             try:
                 if self.method == "GET":
                     full_url = f"{self.url}{payload}"
-                    print(full_url)
                     try:
                         response = http.request('GET', full_url, headers=self.headers, redirect=self.redirects, timeout=10)
                     except urllib3.exceptions.MaxRetryError as e:

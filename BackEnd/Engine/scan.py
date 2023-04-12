@@ -43,10 +43,10 @@ class Scan:
 
     def __init__(self, url, template):
         self.url = url
+        self.template = template
         if not self.isValidUrl():
             print("Invalid URL")
             return
-        self.template = template
 
     @classmethod
     def increment_scan_count(cls):
@@ -67,9 +67,9 @@ class Scan:
         self.headers, self.payloads, self.method, self.redirects = r.reader()
         self.rdata,self.rbody = req.Requester(self.url, self.template, self.headers, self.payloads, self.method, self.redirects).req()
         # reader will now return matchers from the template
-        self.matchtype, self.part, self.key, self.regex,self.code,self.matchCondition = r.readMatchers()
+        self.matchtype, self.part, self.key, self.regex,self.code,self.matchCondition,self.identity,self.info,self.severity = r.readMatchers()
         # after getting the response we will pass this response data to matcher class
-        _json=matcher.Matchers(self.matchCondition,self.matchtype,self.part,self.key,self.regex,self.code,self.payloads,self.rbody,self.rdata,self.url).forAPI()
+        _json=matcher.Matchers(self.matchCondition,self.matchtype,self.part,self.key,self.regex,self.code,self.payloads,self.rbody,self.rdata,self.url,self.identity,self.info,self.severity).forAPI()
         end_time = time.time() # end time of the scan
         duration = end_time - start_time # total time taken for the scan
         store_scan_duration(duration) # store the duration in the database

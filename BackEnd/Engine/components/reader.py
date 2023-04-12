@@ -32,7 +32,9 @@ class Reader:
         regexs = []
         code=[]
         matchCondition=""
-
+        identity=[]
+        info=[]
+        severity=[]
 
         try:
             # Open the JSON file and parse the data
@@ -40,6 +42,9 @@ class Reader:
                 data = json.load(file)
                 matches = data["matches"]
                 matchCondition=data["matchers-condition"]
+                identity=data["id"]
+                info=data["info"]
+                severity=data["severity"]
 
             # Loop through the matches
             for match in matches:
@@ -67,6 +72,6 @@ class Reader:
             # Handle any other exceptions here
             print("An unknown error occurred:", e)
 
-        return matchtypes, parts, keys, regexs,code,matchCondition
+        return matchtypes, parts, keys, regexs,code,matchCondition,identity,info,severity
 
 

@@ -1,8 +1,8 @@
 {
     "id": "xxe",
-    "url":"",
-    "description":"xxe vulnerability is a vulnerability that allows an attacker to read files on the server, and in some cases, to execute commands on the server.",
+    "info":"XXE vulnerabilities occur when an XML parser improperly processes user-supplied XML data, allowing an attacker to exploit external entities and potentially access sensitive data or cause denial of service",
     "severity": "high",
+    "url":"",
     "request":{
         "path":"/",
         "method": "POST",
