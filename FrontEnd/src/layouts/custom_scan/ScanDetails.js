@@ -32,11 +32,12 @@ function ScanDetails({ results }) {
     );
   }
 
+
+  
   const exportPDF = () => {
     const doc = new jsPDF();
-    
-    const tableRows = [
-      ["Identity", results.identity || ""],
+  
+    const tableRows = [    ["Identity", results.identity || ""],
       ["Severity", results.severity || ""],
       ["Info", results.info || ""],
       ["URL", results.url || ""],
@@ -46,15 +47,19 @@ function ScanDetails({ results }) {
       ["Vulnerability", results.vulnerability !== undefined ? (results.vulnerability ? "Yes" : "No") : ""],
     ];
     
-
+  
     doc.autoTable({
-      theme: "grid",
-      tableWidth: "wrap",
+      headStyles: { fillColor: "#1976d2", textColor: "#fff", fontStyle: "bold" },
+      bodyStyles: { textColor: "#333" },
+      margin: { top: 20 },
+      tableWidth: 185, // set the table width to 120 millimeters
       body: tableRows,
     });
-
+  
     doc.save("scan_results.pdf");
   };
+  
+  
 
   const csvData = [
     ["Identity", "Severity", "Info", "URL", "Header Match", "Body Match", "Status Code Match", "Vulnerability"],
