@@ -19,10 +19,10 @@ class Requester:
                 if self.method == "GET":
                     full_url = f"{self.url}{payload}"
                     try:
-                        response = http.request('GET', full_url, headers=self.headers, redirect=self.redirects, timeout=10)
+                        response = http.request('GET', full_url, headers=self.headers, redirect=self.redirects, timeout=5)
                     except urllib3.exceptions.MaxRetryError as e:
                         http = urllib3.PoolManager(cert_reqs='CERT_NONE')
-                        response = http.request('GET', full_url, headers=self.headers, redirect=self.redirects, timeout=10)
+                        response = http.request('GET', full_url, headers=self.headers, redirect=self.redirects, timeout=5)
 
                 elif self.method == "POST":
                     p = urlparse(self.url)
@@ -30,10 +30,10 @@ class Requester:
                     self.headers['Host'] = hostname
 
                     try:
-                        response = http.request('POST', self.url, headers=self.headers, body=payload, redirect=self.redirects, timeout=10)
+                        response = http.request('POST', self.url, headers=self.headers, body=payload, redirect=self.redirects, timeout=5)
                     except urllib3.exceptions.MaxRetryError as e:
                         http = urllib3.PoolManager(cert_reqs='CERT_NONE')
-                        response = http.request('POST', self.url, headers=self.headers, body=payload, redirect=self.redirects, timeout=10)
+                        response = http.request('POST', self.url, headers=self.headers, body=payload, redirect=self.redirects, timeout=5)
 
                 responses[payload] = {"headers": dict(response.headers.items()), "status": response.status, "data": response.data}
 

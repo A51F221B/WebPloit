@@ -1,5 +1,7 @@
 {
     "id": "sqli",
+    "info": "An SQLi injection involves attacker sending SQL queries to the database server",
+    "severity": "high",
     "request": {
         "path":"/",
         "method": "GET",
@@ -18,7 +20,12 @@
         {
             "type": "regex",
             "part": "body",
-            "regex": "\\b(UNION|OR)\\b.+(\bSELECT\\b|\\b1=1\\b)|Syntax error|Unknown column|You have an error in your SQL syntax|error in your SQL syntax|mysql_fetch_array\\(\\) expects parameter 1 to be resource|Warning: mysql_num_rows\\(\\): supplied argument is not a valid MySQL result resource"
+            "regex": "\\b(SELECT|UPDATE|DELETE|INSERT|DROP|ALTER|CREATE|TRUNCATE|TABLE|DATABASE)\\b.*(\bFROM\b|\bINTO\b|\bSET\b|\bVALUES\b).*|Syntax error|Unknown column|You have an error in your SQL syntax|error in your SQL syntax|mysql_fetch_array\\(\\) expects parameter 1 to be resource|Warning: mysql_num_rows\\(\\): supplied argument is not a valid MySQL result resource"
+        },
+        {
+            "type": "status",
+            "code": [302,500,404,403,504],
+            "condition": "or"
         }
 
     ],
@@ -26,6 +33,7 @@
         "'+OR+1=1--",
         "%27+OR+1=1--",
         "1 UNION SELECT * FROM users WHERE id = 1--",
+        "'+UNION+SELECT+NULL,NULL--",
         "1 UNION SELECT password FROM users WHERE username = 'admin'--",
         "1 UNION SELECT email FROM users WHERE id = 1--",
         "1 OR 1=1--",

@@ -1,5 +1,7 @@
 {
     "id": "sqli-POST",
+    "info": "An SQLi injection involves attacker sending SQL queries to the database server",
+    "severity": "high",
     "request": {
         "path": "/",
         "method": "POST",
@@ -14,7 +16,7 @@
         }
     },
     "stopAtMatch": true,
-    "matchers-condition": "or",
+    "matchers-condition": "and",
     "matches": [
         {
             "type": "regex",

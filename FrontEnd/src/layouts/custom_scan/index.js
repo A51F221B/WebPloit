@@ -1,9 +1,9 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import "styles.css";
 
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
@@ -12,13 +12,16 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 
-import ScanDetails from "./ScanDetails"; // Import the new ScanDetails component
+import ScanDetails from "./ScanDetails";
+import withAuth from "./withAuth";
 
-function Custom_scan() {
+function CustomScan() {
   const [url, setUrl] = useState("");
   const [vulnerabilities, setVulnerabilities] = useState({});
   const [message, setMessage] = useState("");
   const [results, setResults] = useState(null);
+
+  const navigate = useNavigate();
 
   const handleVulnerabilityChange = (event) => {
     setVulnerabilities({
@@ -32,7 +35,7 @@ function Custom_scan() {
     const selectedVulns = Object.keys(vulnerabilities).filter(
       (key) => vulnerabilities[key]
     );
-
+  
     try {
       const response = await fetch("http://localhost:5000/api/scan", {
         method: "POST",
@@ -40,11 +43,12 @@ function Custom_scan() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ url, vuln: selectedVulns.join(",") }),
+        credentials: "include" // Add this option to include cookies in the request
       });
-
+  
       const data = await response.json();
       setMessage(data.message);
-
+  
       if (data.status === "success") {
         setResults(data.data);
       } else {
@@ -57,6 +61,8 @@ function Custom_scan() {
       setResults(null);
     }
   };
+  
+  
   
   return (
     <DashboardLayout>
@@ -156,4 +162,4 @@ function Custom_scan() {
   
 }
 
-export default Custom_scan;
+export default withAuth(CustomScan);

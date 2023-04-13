@@ -53,11 +53,19 @@ class Scan:
         cls.total_scan += 1
         update_db_scan_count(cls.total_scan)
 
-
     @classmethod
     def get_total_scan(cls):
         return cls.total_scan
-    
+
+    @classmethod
+    def initialize_scan_count(cls):
+        conn = sqlite3.connect("./Database/scan.db")
+        cursor = conn.cursor()
+        cursor.execute("SELECT total FROM scan_count")
+        result = cursor.fetchone()
+        if result:
+            cls.total_scan = result[0]
+        conn.close()
 
     def main(self):
         start_time = time.time() # start time of the scan
@@ -88,8 +96,10 @@ class Scan:
         return re.match(regex, self.url) is not None
 
 
+Scan.initialize_scan_count()
 
-setup_db()
+
+#setup_db()
 
 # Scan("https://0a38006c04e66ad4c4b8e2d500c600dc.web-security-academy.net/product/stock","blueprints/xxe.json")
 #Scan("http://ptl-3983322e-008445f2.libcurl.so/redirect.php?uri=","blueprints/openredirect.json")

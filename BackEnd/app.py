@@ -9,6 +9,7 @@ from auth import db, User
 from flask_session import Session
 from flask_cors import CORS  # Import CORS
 from flask import make_response
+from functools import wraps
 
 
 import logging
@@ -59,8 +60,40 @@ def setup_db():
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+
+def api_login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if current_user.is_authenticated:
+            return f(*args, **kwargs)
+        else:
+            response = jsonify({"status": "error", "message": "Authentication required"})
+            response.status_code = 401
+            return response
+
+    return decorated_function
+
+
+@app.after_request
+def add_cors_headers(response):
+    response.headers["Access-Control-Allow-Origin"] = "http://localhost:3000"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    response.headers["Access-Control-Allow-Methods"] = "POST, GET, PUT, DELETE, OPTIONS"
+    response.headers["Access-Control-Allow-Credentials"] = "true"
+    return response
+
+
+
+
 @app.route('/signin', methods=['POST', 'OPTIONS'])
 def signin():
+    # Check if the user is already logged in
+    if current_user.is_authenticated:
+        response = jsonify({"status": "success", "message": "Already logged in"})
+        response.headers["Access-Control-Allow-Origin"] = "http://localhost:3000" # Add the CORS header
+        return response, 200
+
+    # Handle OPTIONS request for CORS
     if request.method == 'OPTIONS':
         response = make_response("", 204)
         response.headers["Access-Control-Allow-Origin"] = "http://localhost:3000"
@@ -69,6 +102,7 @@ def signin():
         response.headers["Access-Control-Allow-Credentials"] = "true"
         return response
 
+    # Handle POST request for sign-in
     data = request.get_json()
     user = User.query.filter_by(email=data['email']).first()
     if user and user.check_password(data['password']):
@@ -84,6 +118,18 @@ def signin():
         response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
         response.headers["Access-Control-Allow-Credentials"] = "true"
         return response, 401
+
+
+
+
+@app.route('/api/check-auth')
+def check_auth():
+    if current_user.is_authenticated:
+        return jsonify({"status": "success", "user_id": current_user.id}), 200
+    else:
+        return jsonify({"status": "error", "message": "User not authenticated"}), 401
+
+
 
 @app.route('/signout', methods=['POST'])
 @login_required
@@ -272,8 +318,9 @@ def endpoints():
         }, 500
 
     
-     
+
 @app.route('/api/scan', methods=['POST'])
+@api_login_required
 def scan():
     content_type = request.headers.get('Content-Type')
     if content_type == 'application/json':
@@ -322,25 +369,30 @@ def scan():
 
 # Analytics 
 @app.route("/total_scans", methods=["GET"])
+@api_login_required
 def get_total_scans():
     return jsonify({"total_scans": Scan.get_total_scan()})
 
 
 @app.route('/total_users', methods=['GET'])
+@api_login_required
 def get_total_users():
     total_users = User.query.count()
     return jsonify({"total_users": total_users})
 
 @app.route('/total_revenue', methods=['GET'])
+@api_login_required
 def get_total_revenue():
     return jsonify({"total_revenue": 0})
 
 @app.route('/total_followers', methods=['GET'])
+@api_login_required
 def get_total_followers():
     return jsonify({"total_followers": 0})
 
 
 @app.route('/scan_durations', methods=['GET'])
+@api_login_required
 def get_scan_durations():
     conn = sqlite3.connect("Database/scan.db")
     cursor = conn.cursor()

@@ -155,14 +155,6 @@ function ScanDetails({ results }) {
       </TableContainer>
     </Box>
   );
-  
-  
-  
-              
-  
-  
-  
-  
 }
 
 export default ScanDetails;

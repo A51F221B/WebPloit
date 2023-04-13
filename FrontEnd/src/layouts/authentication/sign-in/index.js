@@ -49,37 +49,49 @@ function Basic() {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({
           email: email,
           password: password,
         }),
       });
   
+      console.log("Response:", response); // Add this line
+  
       const data = await response.json();
   
-      if (response.ok) {
-        if (data.status === "success") {
-          setSuccess(true);
-          setError(false);
-          setTimeout(() => {
-            navigate("/dashboard");
-          }, 2000);
-        } else {
-          setError(true);
-          setSuccess(false);
-          setErrorMessage(data.message);
+      console.log("Data:", data); // Add this line
+  
+      if (data.status === "success") {
+        const cookies = response.headers.get("set-cookie");
+        if (cookies) {
+          const sessionId = cookies
+            .split(";")
+            .find((cookie) => cookie.startsWith("session"))
+            .split("=")[1];
+          localStorage.setItem("sessionId", sessionId);
         }
+  
+        setSuccess(true);
+        setError(false);
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 2000);
       } else {
         setError(true);
         setSuccess(false);
         setErrorMessage(data.message);
       }
     } catch (error) {
+      console.error("Error:", error); // Add this line
       setError(true);
       setSuccess(false);
       setErrorMessage("An error occurred while signing in. Please try again later.");
     }
   };
+  
+  
+  
   
 
   
