@@ -318,7 +318,6 @@ def endpoints():
         }, 500
 
     
-
 @app.route('/api/scan', methods=['POST'])
 @api_login_required
 def scan():
@@ -340,12 +339,7 @@ def scan():
     if not data.get('vuln') or data['vuln'] == "":
         return {
             "status": "error",
-            "message": "No vulnerability specified"
-        }, 500
-    if data['vuln'] not in ['openredirect','xxe','sqli','sqlipost']:
-        return {
-            "status": "error",
-            "message": "Invalid vulnerability specified"
+            "message": "No vulnerabilities specified"
         }, 500
 
     path = {
@@ -354,17 +348,28 @@ def scan():
         "sqli": "Engine/blueprints/sqli.json",
         "sqlipost": "Engine/blueprints/sqlipost.json"
     }
-    res = Scan(data['url'], path[data['vuln']]).main()
-   # print(res)
 
-    # Parse the JSON string returned by the main function
-    res_data = json.loads(res)
+    vuln_list = [v.strip() for v in data['vuln'].split(',')]
+
+    for vuln in vuln_list:
+        if vuln not in path:
+            return {
+                "status": "error",
+                "message": f"Invalid vulnerability specified: {vuln}"
+            }, 500
+
+    results = []
+    for vuln in vuln_list:
+        res = Scan(data['url'], path[vuln]).main()
+        res_data = json.loads(res)
+        results.append({"vuln": vuln, "data": res_data})
 
     return {
         "status": "success",
         "message": "Scan completed",
-        "data": res_data
+        "results": results
     }, 200
+
 
 
 # Analytics 

@@ -1,6 +1,6 @@
 {
     "id": "sqli",
-    "info": "An SQLi injection involves attacker sending SQL queries to the database server",
+    "info": "An SQLi injection involves attacker sending SQL queries to the database server.",
     "severity": "high",
     "request": {
         "path":"/",

@@ -39,63 +39,56 @@ function Basic() {
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const handleSignIn = async (e) => {
-    e.preventDefault();
-    const API_URL = "http://localhost:5000";
-  
-    try {
-      const response = await fetch(`${API_URL}/signin`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
-      });
-  
-      console.log("Response:", response); // Add this line
-  
-      const data = await response.json();
-  
-      console.log("Data:", data); // Add this line
-  
-      if (data.status === "success") {
-        const cookies = response.headers.get("set-cookie");
-        if (cookies) {
-          const sessionId = cookies
-            .split(";")
-            .find((cookie) => cookie.startsWith("session"))
-            .split("=")[1];
-          localStorage.setItem("sessionId", sessionId);
-        }
-  
-        setSuccess(true);
-        setError(false);
-        setTimeout(() => {
-          navigate("/dashboard");
-        }, 2000);
-      } else {
-        setError(true);
-        setSuccess(false);
-        setErrorMessage(data.message);
+const handleSignIn = async (e) => {
+  e.preventDefault();
+  const API_URL = "http://localhost:5000";
+
+  try {
+    const response = await fetch(`${API_URL}/signin`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        email: email,
+        password: password,
+      }),
+    });
+
+    console.log("Response:", response); // Add this line
+
+    const data = await response.json();
+
+    console.log("Data:", data); // Add this line
+
+    if (data.status === "success") {
+      const cookies = response.headers.get("set-cookie");
+      if (cookies) {
+        const sessionId = cookies
+          .split(";")
+          .find((cookie) => cookie.startsWith("session"))
+          .split("=")[1];
+        localStorage.setItem("sessionId", sessionId);
       }
-    } catch (error) {
-      console.error("Error:", error); // Add this line
+
+      setSuccess(true);
+      setError(false);
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 2000);
+    } else {
       setError(true);
       setSuccess(false);
-      setErrorMessage("An error occurred while signing in. Please try again later.");
+      setErrorMessage(data.message);
     }
-  };
-  
-  
-  
-  
-
-  
-  
+  } catch (error) {
+    console.error("Error:", error); // Add this line
+    setError(true);
+    setSuccess(false);
+    setErrorMessage("An error occurred while signing in. Please try again later.");
+  }
+};
 
   
 

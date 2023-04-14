@@ -15,45 +15,35 @@ import {
   Paper,
 } from "@mui/material";
 
-
 function ScanDetails({ results }) {
-  if (!results) {
+  if (!results || results.length === 0) {
     return null;
   }
 
-  if (results.vulnerability === false) {
-    return (
-      <Box sx={{ mt: 3, p: 2, bgcolor: "success.light", borderRadius: 1 }}>
-        <Typography variant="h6" gutterBottom>
-          Scan Details
-        </Typography>
-        <Typography variant="body1">No vulnerability found.</Typography>
-      </Box>
-    );
-  }
-
-
-  
   const exportPDF = () => {
     const doc = new jsPDF();
   
-    const tableRows = [    ["Identity", results.identity || ""],
-      ["Severity", results.severity || ""],
-      ["Info", results.info || ""],
-      ["URL", results.url || ""],
-      ["Header Match", results.header_match !== undefined ? (results.header_match ? "Yes" : "No") : ""],
-      ["Body Match", results.body_match !== undefined ? (results.body_match ? "Yes" : "No") : ""],
-      ["Status Code Match", results.status_code_match !== undefined ? (results.status_code_match ? "Yes" : "No") : ""],
-      ["Vulnerability", results.vulnerability !== undefined ? (results.vulnerability ? "Yes" : "No") : ""],
-    ];
-    
+    results.forEach((result, index) => {
+      doc.setFontSize(16);
+      doc.text(`Scan Details: ${result.vuln}`, 14, 20 + index * 80);
+      doc.setFontSize(12);
   
-    doc.autoTable({
-      headStyles: { fillColor: "#1976d2", textColor: "#fff", fontStyle: "bold" },
-      bodyStyles: { textColor: "#333" },
-      margin: { top: 20 },
-      tableWidth: 185, // set the table width to 120 millimeters
-      body: tableRows,
+      const tableRows = [
+        ["Parameter", "Value"],
+        ...Object.entries(result.data).map(([key, value]) => [
+          key,
+          typeof value === "boolean" ? (value ? "Yes" : "No") : value,
+        ]),
+      ];
+  
+      doc.autoTable({
+        startY: 30 + index * 80,
+        headStyles: { fillColor: "#1976d2", textColor: "#fff", fontStyle: "bold" },
+        bodyStyles: { textColor: "#333" },
+        margin: { top: 20 },
+        tableWidth: 185,
+        body: tableRows,
+      });
     });
   
     doc.save("scan_results.pdf");
@@ -62,18 +52,44 @@ function ScanDetails({ results }) {
   
 
   const csvData = [
-    ["Identity", "Severity", "Info", "URL", "Header Match", "Body Match", "Status Code Match", "Vulnerability"],
     [
-      results.identity || "",
-      results.vulnerability !== undefined ? (results.vulnerability ? "Yes" : "No") : "",
-      results.severity || "",
-      results.info || "",
-      results.url || "",
-      results.header_match !== undefined ? (results.header_match ? "Yes" : "No") : "",
-      results.body_match !== undefined ? (results.body_match ? "Yes" : "No") : "",
-      results.status_code_match !== undefined ? (results.status_code_match ? "Yes" : "No") : "",
-
+      "Vulnerability",
+      "Identity",
+      "Severity",
+      "Info",
+      "URL",
+      "Header Match",
+      "Body Match",
+      "Status Code Match",
+      "Vulnerability",
     ],
+    ...results.map((result) => [
+      result.vuln,
+      result.data.identity || "",
+      result.data.severity || "",
+      result.data.info || "",
+      result.data.url || "",
+      result.data.header_match !== undefined
+        ? result.data.header_match
+          ? "Yes"
+          : "No"
+        : "",
+      result.data.body_match !== undefined
+        ? result.data.body_match
+          ? "Yes"
+          : "No"
+        : "",
+      result.data.status_code_match !== undefined
+        ? result.data.status_code_match
+          ? "Yes"
+          : "No"
+        : "",
+      result.data.vulnerability !== undefined
+        ? result.data.vulnerability
+          ? "Yes"
+          : "No"
+        : "",
+    ]),
   ];
   
 
@@ -101,60 +117,39 @@ function ScanDetails({ results }) {
           Export to PDF
         </MDButton>
       </Box>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="scan details table">
-          <TableHead>
-            <TableRow sx={{ bgcolor: "primary.main" }}>
-              <TableCell sx={{ color: "common.white", fontWeight: "bold" }}>Parameter</TableCell>
-              <TableCell sx={{ color: "common.white", fontWeight: "bold" }}>Value</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <TableRow>
-              <TableCell sx={{ fontWeight: "bold" }}>Identity</TableCell>
-              <TableCell>{results.identity || ""}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell sx={{ fontWeight: "bold" }}>Severity</TableCell>
-              <TableCell>{results.severity || ""}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell sx={{ fontWeight: "bold" }}>Info</TableCell>
-              <TableCell>{results.info || ""}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell sx={{ fontWeight: "bold" }}>URL</TableCell>
-              <TableCell>{results.url || ""}</TableCell>
-            </TableRow>
-            {results.header_match !== undefined && (
-              <TableRow>
-                <TableCell sx={{ fontWeight: "bold" }}>Header Match</TableCell>
-                <TableCell>{results.header_match ? "Yes" : "No"}</TableCell>
+      {results.map((result, index) => (
+        <TableContainer component={Paper} key={index} sx={{ marginBottom: 2 }}>
+          <Table sx={{ minWidth: 650 }} aria-label={`scan details table ${index}`}>
+            <TableHead>
+              <TableRow sx={{ bgcolor: "primary.main" }}>
+                <TableCell sx={{ color: "common.white", fontWeight: "bold" }}>
+                  Parameter
+                </TableCell>
+                <TableCell sx={{ color: "common.white", fontWeight: "bold" }}>
+                  Value
+                </TableCell>
               </TableRow>
-            )}
-            {results.body_match !== undefined && (
-              <TableRow>
-                <TableCell sx={{ fontWeight: "bold" }}>Body Match</TableCell>
-                <TableCell>{results.body_match ? "Yes" : "No"}</TableCell>
-              </TableRow>
-            )}
-            {results.status_code_match !== undefined && (
-              <TableRow>
-                <TableCell sx={{ fontWeight: "bold" }}>Status Code Match</TableCell>
-                <TableCell>{results.status_code_match ? "Yes" : "No"}</TableCell>
-              </TableRow>
-            )}
-            {results.vulnerability !== undefined && (
+            </TableHead>
+            <TableBody>
               <TableRow>
                 <TableCell sx={{ fontWeight: "bold" }}>Vulnerability</TableCell>
-                <TableCell>{results.vulnerability ? "Yes" : "No"}</TableCell>
+                <TableCell>{result.vuln}</TableCell>
               </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+              {Object.entries(result.data).map(([key, value]) => (
+                <TableRow key={key}>
+                  <TableCell sx={{ fontWeight: "bold" }}>{key}</TableCell>
+                  <TableCell>
+                    {typeof value === "boolean" ? (value ? "Yes" : "No") : value}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      ))}
     </Box>
   );
+  
 }
 
 export default ScanDetails;

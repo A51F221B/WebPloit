@@ -35,7 +35,7 @@ function CustomScan() {
     const selectedVulns = Object.keys(vulnerabilities).filter(
       (key) => vulnerabilities[key]
     );
-  
+
     try {
       const response = await fetch("http://localhost:5000/api/scan", {
         method: "POST",
@@ -43,14 +43,14 @@ function CustomScan() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ url, vuln: selectedVulns.join(",") }),
-        credentials: "include" // Add this option to include cookies in the request
+        credentials: "include",
       });
-  
+
       const data = await response.json();
       setMessage(data.message);
-  
+
       if (data.status === "success") {
-        setResults(data.data);
+        setResults(data.results);
       } else {
         setMessage("No vulnerability found.");
         setResults(null);
@@ -61,8 +61,6 @@ function CustomScan() {
       setResults(null);
     }
   };
-  
-  
   
   return (
     <DashboardLayout>
