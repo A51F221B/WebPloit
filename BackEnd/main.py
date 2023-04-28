@@ -5,6 +5,7 @@ from EndpointsParser.parser import init
 from EndpointsParser.core import * 
 from SubdomainScanner.subdomains import Subdomains
 from Engine.scan import Scan
+from rich import print_json
 
 c=console.Console() ## to beautify the console output we use rich print() function instead of defualt
 
@@ -25,7 +26,7 @@ class Argparse():
 
       # for Endpoint Parser
       endpoint_parser=subparser.add_parser("endpoints",help="Endpoint Parser")
-      endpoint_parser.add_argument('-d','--domain' , help = 'Domain name of the taget [ex : hackerone.com]' , required=True)
+      endpoint_parser.add_argument('-u','--url' , help = 'Domain name of the taget [ex : hackerone.com]' , required=True)
       endpoint_parser.add_argument('-s' ,'--subs' , help = 'Set False for no subs [ex : --subs False ]' , default=True)
       endpoint_parser.add_argument('-l','--level' ,  help = 'For nested parameters [ex : --level high]')
       endpoint_parser.add_argument('-e','--exclude', help= 'extensions to exclude [ex --exclude php,aspx]')
@@ -82,15 +83,19 @@ def main():
 
   # #for endpoint parsing
   elif args.command=="endpoints":
-    init(args.domain, args.subs, args.level, args.exclude, args.output, args.placeholder, args.quiet, args.retries,args.vulns)
+    init(args.url, args.subs, args.level, args.exclude, args.output, args.placeholder, args.quiet, args.retries,args.vulns)
 
-  # elif args.command=="engine":
-  #   _path={
-  #     "openredirect":"Engine/blueprints/openredirect.json",
-  #     "xss":"Engine/blueprints/xss.json",
-  #     "xss":"Engine/blueprints/xss.json",
-  #   }
-  #   Scan(args.url,_path[args.vulns])
+  elif args.command=="engine":
+    _path={
+      "openredirect":"Engine/blueprints/openredirect.json",
+      "xss":"Engine/blueprints/xss.json",
+      "xss":"Engine/blueprints/xss.json",
+      "sqli":"Engine/blueprints/sqli.json",
+      "xxe":"Engine/blueprints/xxe.json",
+      "sqlipost":"Engine/blueprints/sqlipost.json"
+    }
+    res=Scan(args.url,_path[args.vulns]).main()
+    print_json(res)
 
   # elif args.command=="scanner":
   #   pass

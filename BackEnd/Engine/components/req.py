@@ -1,8 +1,6 @@
 import urllib3
 from urllib.parse import urlparse
-from concurrent.futures import ThreadPoolExecutor, as_completed,wait
-import httpx
-import asyncio
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
 class Requester:
@@ -14,8 +12,7 @@ class Requester:
         self.method = method
         self.redirects = redirects
 
-    def send_request(self, payload):
-        http = urllib3.PoolManager()
+    def send_request(self, http, payload):
         response = None
 
         try:
@@ -48,6 +45,9 @@ class Requester:
         except urllib3.exceptions.SSLError as e:
             print("An SSL certificate verification error occurred:", e.reason)
 
+        except urllib3.exceptions.HTTPError as e:
+            print("An HTTP error occurred:", e)
+
         except Exception as e:
             print("An unknown error occurred:", e)
 
@@ -55,9 +55,10 @@ class Requester:
 
     def req(self):
         responses = {}
+        http = urllib3.PoolManager()
 
-        with ThreadPoolExecutor(max_workers=50) as executor:  # Increase the max_workers value to 50
-            future_responses = {executor.submit(self.send_request, payload): payload for payload in self.payloads}
+        with ThreadPoolExecutor(max_workers=50) as executor:
+            future_responses = {executor.submit(self.send_request, http, payload): payload for payload in self.payloads}
 
             for future in as_completed(future_responses):
                 try:
@@ -71,4 +72,3 @@ class Requester:
             return responses, response.data
         except:
             return responses, None
-
