@@ -88,6 +88,7 @@ def readFile(file):
         "openredirect":"EndpointsParser/profiles/redirect.json",
         "xss":"EndpointsParser/profiles/xss.json",
         "xxe":"EndpointsParser/profiles/xxe.json",
+        "sqli":"EndpointsParser/profiles/sqli.json",
     }
     with open(paths[file]) as json_file:
         data = json.loads(json_file.read())

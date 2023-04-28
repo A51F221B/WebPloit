@@ -2,6 +2,7 @@ import re
 import json
 import time
 import sqlite3
+import asyncio
 from rich import print_json
 from .components import req
 from .components import matcher
@@ -69,7 +70,7 @@ class Scan:
 
     def main(self):
         start_time = time.time() # start time of the scan
-        self.increment_scan_count()
+#        self.increment_scan_count()
         r=Reader(self.template)
         # reader is returning the request data and the req method is using those and returning response data
         self.headers, self.payloads, self.method, self.redirects = r.reader()

@@ -10,8 +10,6 @@ from flask_session import Session
 from flask_cors import CORS  # Import CORS
 from flask import make_response
 from functools import wraps
-
-
 import logging
 
 app = Flask(__name__)
@@ -285,7 +283,7 @@ def endpoints():
             values['retries']=data['retries']
 
         # making sure that vulns if from ['openredirect','xss','sqli','xxe']
-        if data.get('vulns') and data['vulns'] in ['openredirect','xss','sqli','xxe']:
+        if data.get('vulns') and data['vulns'] in ['openredirect','xss','sqli','xxe','xss']:
             values['vulns']=data['vulns']
         else:
             return {
@@ -346,7 +344,8 @@ def scan():
         'openredirect': 'Engine/blueprints/openredirect.json',
         'xxe': 'Engine/blueprints/xxe.json',
         "sqli": "Engine/blueprints/sqli.json",
-        "sqlipost": "Engine/blueprints/sqlipost.json"
+        "sqlipost": "Engine/blueprints/sqlipost.json",
+        "xss": "Engine/blueprints/xss.json"
     }
 
     vuln_list = [v.strip() for v in data['vuln'].split(',')]
@@ -363,11 +362,90 @@ def scan():
         res = Scan(data['url'], path[vuln]).main()
         res_data = json.loads(res)
         results.append({"vuln": vuln, "data": res_data})
+    Scan.increment_scan_count()
 
     return {
         "status": "success",
         "message": "Scan completed",
         "results": results
+    }, 200
+
+
+
+
+@app.route('/api/deepscan', methods=['POST'])
+@api_login_required
+def deepscan():
+    content_type = request.headers.get('Content-Type')
+    if content_type == 'application/json':
+        data = request.json
+    else:
+        data = request.form.to_dict()
+    if data is None or data == {}:
+        return {
+            "status": "error",
+            "message": "No data provided"
+        }, 500
+    if not data.get('url') or data['url'] == "":
+        return {
+            "status": "error",
+            "message": "No url provided"
+        }, 500
+    if not data.get('vuln') or data['vuln'] == "":
+        return {
+            "status": "error",
+            "message": "No vulnerabilities specified"
+        }, 500
+        # making sure that vulns if from ['openredirect','xss','sqli','xxe']
+    if data.get('vuln') and data['vuln'] not in ['openredirect','xss','sqli','xxe','xss']:
+        return {
+            "status": "error",
+            "message": "Invalid value for vulns"
+        },500
+
+    path = {
+        'openredirect': 'Engine/blueprints/openredirect.json',
+        'xxe': 'Engine/blueprints/xxe.json',
+        "sqli": "Engine/blueprints/sqli.json",
+        "sqlipost": "Engine/blueprints/sqlipost.json",
+        "xss": "Engine/blueprints/xss.json"
+    }
+
+    values={
+        'subs':True,
+        'level':None,
+        'exclude':None,
+        'output':None,
+        'placeholder':"",
+        'quiet':None,
+        'retries':3,
+        'vulns':None
+    }
+
+    endpoints = init(
+        data['url'],
+        subs=values['subs'],
+        level=values['level'],
+        exclude=values['exclude'],
+        output=values['output'],
+        placeholder=values['placeholder'],
+        quiet=values['quiet'],
+        retries=values['retries'],
+        vulns=data['vuln']
+    )
+
+    results = []
+
+    for endpoint in endpoints:
+        res = Scan(endpoint,path[data["vuln"]] ).main()
+        res_data = json.loads(res)
+        results.append({"vuln": data["vuln"], "data": res_data})
+    Scan.increment_scan_count()
+
+    return {
+        "status": "success",
+        "message": "Scan completed",
+        "results": results  
     }, 200
 
 

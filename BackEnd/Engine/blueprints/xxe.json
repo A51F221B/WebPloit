@@ -1,6 +1,6 @@
 {
     "id": "xxe",
-    "info":"XXE vulnerabilities occur when an XML parser improperly processes user-supplied XML data, allowing an attacker to exploit external entities and potentially access sensitive data or cause denial of service",
+    "info": "XXE vulnerabilities occur when an XML parser improperly processes user-supplied XML data.",
     "severity": "high",
     "url":"",
     "request":{
