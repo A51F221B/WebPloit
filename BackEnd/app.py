@@ -363,7 +363,10 @@ def scan():
     for vuln in vuln_list:
         res = Scan(data['url'], path[vuln]).main()
         res_data = json.loads(res)
+        if res_data.get("vulnerability"):
+            update_vulnerability_count(vuln)  # Update vulnerability count when a vulnerability is found
         results.append({"vuln": vuln, "data": res_data})
+
     Scan.increment_scan_count()
 
     return {
@@ -439,8 +442,10 @@ def deepscan():
     results = []
 
     for endpoint in endpoints:
-        res = Scan(endpoint,path[data["vuln"]] ).main()
+        res = Scan(endpoint, path[data["vuln"]]).main()
         res_data = json.loads(res)
+        if res_data.get("vulnerability"):
+            update_vulnerability_count(data["vuln"])
         results.append({"vuln": data["vuln"], "data": res_data})
     Scan.increment_scan_count()
 
@@ -449,6 +454,41 @@ def deepscan():
         "message": "Scan completed",
         "results": results  
     }, 200
+
+
+vulnerability_counts = {
+    "sqli": 0,
+    "xxe": 0,
+    "xss": 0,
+    "openredirect": 0,
+    "sqlipost" : 0
+}
+
+
+
+def update_vulnerability_count(vuln_type):
+    conn = sqlite3.connect('Database/scan.db')
+    cursor = conn.cursor()
+
+    # Create the table if it doesn't exist
+    cursor.execute('''CREATE TABLE IF NOT EXISTS vulnerability_counts (
+        vuln_type TEXT PRIMARY KEY,
+        count INTEGER DEFAULT 0
+    );''')
+
+    # Check if the vulnerability type exists in the table
+    cursor.execute("SELECT count FROM vulnerability_counts WHERE vuln_type = ?", (vuln_type,))
+    row = cursor.fetchone()
+
+    if row is None:
+        # Insert the vulnerability type with an initial count of 1
+        cursor.execute("INSERT INTO vulnerability_counts (vuln_type, count) VALUES (?, 1)", (vuln_type,))
+    else:
+        # Update the count for the vulnerability type
+        cursor.execute("UPDATE vulnerability_counts SET count = count + 1 WHERE vuln_type = ?", (vuln_type,))
+
+    conn.commit()
+    conn.close()
 
 
 
@@ -487,3 +527,23 @@ def get_scan_durations():
 
     scan_durations = [{"scan_id": scan_id, "duration": duration} for scan_id, duration in result]
     return jsonify({"scan_durations": scan_durations})
+
+
+@app.route('/api/vulnerability_count', methods=['GET'])
+@api_login_required
+def get_vulnerability_count():
+    conn = sqlite3.connect('Database/scan.db')
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT vuln_type, count FROM vulnerability_counts")
+    rows = cursor.fetchall()
+
+    vulnerability_counts = {row[0]: row[1] for row in rows}
+
+    conn.close()
+
+    return {
+        "status": "success",
+        "message": "Vulnerability count retrieved",
+        "counts": vulnerability_counts
+    }, 200

@@ -13,6 +13,7 @@ import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
 import ReportsLineChart from "examples/Charts/LineCharts/ReportsLineChart";
 import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
 import ScanDurationChart from "./ScanDurationChart";
+import VulnerabilityPieChart from "./VulnerabilityPieChart";
 
 // Data
 import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
@@ -98,8 +99,8 @@ return (
               count={totalRevenue}
               percentage={{
                 color: "success",
-                amount: "+1%",
-                label: "than yesterday",
+                amount: "",
+                label: "Updated today",
               }}
             />
           </MDBox>
@@ -121,9 +122,15 @@ return (
         </Grid>
       </Grid>
       <MDBox mt={3}>
-          <ScanDurationChart />
-        </MDBox>
-
+    <Grid container spacing={2} alignItems="center">
+      <Grid item xs={12} sm={6}>
+        <ScanDurationChart />
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        <VulnerabilityPieChart />
+      </Grid>
+    </Grid>
+  </MDBox>
       {/* ...rest of the component */}
     </MDBox>
   </DashboardLayout>

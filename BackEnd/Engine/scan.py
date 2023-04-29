@@ -95,12 +95,13 @@ class Scan:
             r'(?:/?|[/?]\S+)$', re.IGNORECASE)
         
         return re.match(regex, self.url) is not None
-
-
-Scan.initialize_scan_count()
+    
 
 
 #setup_db()
+Scan.initialize_scan_count()
+
+
 
 # Scan("https://0a38006c04e66ad4c4b8e2d500c600dc.web-security-academy.net/product/stock","blueprints/xxe.json")
 #Scan("http://ptl-3983322e-008445f2.libcurl.so/redirect.php?uri=","blueprints/openredirect.json")

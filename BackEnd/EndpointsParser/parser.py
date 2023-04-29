@@ -89,6 +89,7 @@ def readFile(file):
         "xss":"EndpointsParser/profiles/xss.json",
         "xxe":"EndpointsParser/profiles/xxe.json",
         "sqli":"EndpointsParser/profiles/sqli.json",
+        "sqlipost":"EndpointsParser/profiles/sqlipost.json",
     }
     with open(paths[file]) as json_file:
         data = json.loads(json_file.read())
