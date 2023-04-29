@@ -120,6 +120,10 @@ return (
           </MDBox>
         </Grid>
       </Grid>
+      <MDBox mt={3}>
+          <ScanDurationChart />
+        </MDBox>
+
       {/* ...rest of the component */}
     </MDBox>
   </DashboardLayout>

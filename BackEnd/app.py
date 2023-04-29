@@ -181,6 +181,7 @@ def base():
 
 
 @app.route('/api/subdomains', methods=['POST','GET'])
+@api_login_required
 def subdomains():
     if request.method == 'POST':
         try:
@@ -235,6 +236,7 @@ def subdomains():
 
 
 @app.route('/api/endpoints', methods=['POST'])
+@api_login_required
 def endpoints():
     try:
         content_type=request.headers.get('Content-Type')

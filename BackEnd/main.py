@@ -43,11 +43,6 @@ class Argparse():
       vuln_parser.add_argument("-o","--output",help="Output file name [by default it is \'domain.txt\']",action="store",type=str)
       vuln_parser.add_argument("-p","--payload",help="Payload to test the vulnerability",action="store",type=str)
       
-      # adding scanner
-      scanner_parser=subparser.add_parser("scanner",help="Vulnerability Scanner")
-      scanner_parser.add_argument("-u","--url",help="URL of the website",action="store",type=str,required=True)
-      scanner_parser.add_argument("-v","--vulns",help="Find Vulnerabilities in the endpoints", choices=['openredirect','xss','sqli','xxe'],default=None)
-
 
     def validateURL(self,url):
       import re
@@ -97,8 +92,6 @@ def main():
     res=Scan(args.url,_path[args.vulns]).main()
     print_json(res)
 
-  # elif args.command=="scanner":
-  #   pass
 
 
 if __name__=='__main__':
