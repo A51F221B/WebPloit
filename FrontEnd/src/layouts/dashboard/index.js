@@ -14,10 +14,12 @@ import ReportsLineChart from "examples/Charts/LineCharts/ReportsLineChart";
 import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
 import ScanDurationChart from "./ScanDurationChart";
 import VulnerabilityPieChart from "./VulnerabilityPieChart";
+import withAuth from "./withAuth";
 
 // Data
 import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
 import reportsLineChartData from "layouts/dashboard/data/reportsLineChartData";
+
 
 function Dashboard() {
   const [totalScans, setTotalScans] = useState(0);
@@ -138,4 +140,4 @@ return (
 
 }
 
-export default Dashboard;
+export default withAuth(Dashboard);

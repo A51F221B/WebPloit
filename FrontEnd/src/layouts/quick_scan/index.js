@@ -9,6 +9,8 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import DataTable from "examples/Tables/DataTable";
 import QuickScanData from "layouts/quick_scan/data/QuickScanData";
 import { styled } from '@mui/material/styles';
+import withAuth from "./withAuth";
+
 
 const EndpointList = styled('div')({
   display: 'flex',
@@ -159,4 +161,4 @@ function Quick_scan() {
                             }
 
 
-export default Quick_scan;
+export default withAuth(Quick_scan);

@@ -141,7 +141,7 @@ def signout():
 @app.route('/signup', methods=['POST'])
 def signup():
     data = request.get_json()
-    email = data['email']
+    email = data['emai  l']
     password = data['password']
 
     print(f"Signup attempt for email: {email}")  # Add this line

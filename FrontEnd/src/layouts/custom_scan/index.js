@@ -126,6 +126,17 @@ function CustomScan() {
                     }
                     label="Open Redirect"
                   />
+                  <FormControlLabel
+                    control={
+                      <Checkbox 
+                        checked={vulnerabilities.xss || false}
+                        onChange={handleVulnerabilityChange}
+                        name="xss"
+                        color="primary"
+                      />
+                    }
+                    label="Cross-Site Scripting (XSS)"
+                  />
   
                   {/* ... */}
                   {/* (your other checkboxes) */}

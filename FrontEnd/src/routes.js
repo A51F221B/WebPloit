@@ -51,7 +51,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Quick Scan",
+    name: "Endpoint Parser",
     key: "quick-scan",
     icon: <SpeedIcon fontSize="small">quick-scan</SpeedIcon>,
     route: "/quick-scan",

