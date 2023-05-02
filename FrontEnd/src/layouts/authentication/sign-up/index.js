@@ -7,7 +7,7 @@ import MDTypography from "components/MDTypography";
 import MDInput from "components/MDInput";
 import MDButton from "components/MDButton";
 import CoverLayout from "layouts/authentication/components/CoverLayout";
-import bgImage from "assets/images/bg-sign-up-cover.jpeg";
+import bgImage from "assets/images/bg-sign-up-cover.png";
 
 function Cover() {
   const [email, setEmail] = useState("");
@@ -45,7 +45,9 @@ function Cover() {
         setErrorMessage(data.message);
       }
     } catch (error) {
-      setErrorMessage("An error occurred while signing up. Please try again later.");
+      setErrorMessage(
+        "An error occurred while signing up. Please try again later."
+      );
     }
   };
 
@@ -119,27 +121,25 @@ function Cover() {
               </MDButton>
             </MDBox>
             <MDBox mt={3} mb={1} textAlign="center">
-  <MDTypography variant="button" color="text">
-    Already have an account?{" "}
-    <MDTypography
-      component={RouterLink} // Use RouterLink instead of Link
-      to="/authentication/sign-in"
-      variant="button"
-      color="info"
-      fontWeight="medium"
-      textGradient
-    >
-      Sign In
-    </MDTypography>
-  </MDTypography>
-</MDBox>
-
+              <MDTypography variant="button" color="text">
+                Already have an account?{" "}
+                <MDTypography
+                  component={RouterLink} // Use RouterLink instead of Link
+                  to="/authentication/sign-in"
+                  variant="button"
+                  color="info"
+                  fontWeight="medium"
+                  textGradient
+                >
+                  Sign In
+                </MDTypography>
+              </MDTypography>
+            </MDBox>
           </MDBox>
         </MDBox>
       </Card>
     </CoverLayout>
   );
-  
 }
 
 export default Cover;

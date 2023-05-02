@@ -61,14 +61,29 @@ function CustomScan() {
       setResults(null);
     }
   };
-  
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
+
       <MDBox pt={6} pb={3}>
         <Grid container spacing={6}>
           <Grid item xs={12}>
             <Card>
+              <MDBox
+                mx={2}
+                mt={-3}
+                py={3}
+                px={2}
+                variant="gradient"
+                bgColor="info"
+                borderRadius="lg"
+                coloredShadow="info"
+              >
+                <MDTypography variant="h6" color="white">
+                  Custom Scan
+                </MDTypography>
+              </MDBox>
               <div style={{ margin: "30px 20px" }}>
                 <form onSubmit={handleSubmit}>
                   <input
@@ -128,7 +143,7 @@ function CustomScan() {
                   />
                   <FormControlLabel
                     control={
-                      <Checkbox 
+                      <Checkbox
                         checked={vulnerabilities.xss || false}
                         onChange={handleVulnerabilityChange}
                         name="xss"
@@ -137,12 +152,17 @@ function CustomScan() {
                     }
                     label="Cross-Site Scripting (XSS)"
                   />
-  
+
                   {/* ... */}
                   {/* (your other checkboxes) */}
                   {/* ... */}
                   <div style={{ margin: "20px 0px" }}>
-                    <MDButton type="submit" variant="gradient" color="info" size="lg">
+                    <MDButton
+                      type="submit"
+                      variant="gradient"
+                      color="info"
+                      size="lg"
+                    >
                       Scan
                     </MDButton>
                   </div>
@@ -154,21 +174,15 @@ function CustomScan() {
                     </MDTypography>
                   </div>
                 )}
-                {results && (
-                  <ScanDetails results={results} />
-                )}
+                {results && <ScanDetails results={results} />}
               </div>
             </Card>
           </Grid>
         </Grid>
       </MDBox>
-      <Footer />
+      {/* <Footer /> */}
     </DashboardLayout>
   );
-  
-  
-  
-  
 }
 
 export default withAuth(CustomScan);

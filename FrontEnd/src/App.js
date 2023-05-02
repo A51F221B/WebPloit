@@ -32,7 +32,11 @@ import createCache from "@emotion/cache";
 import routes from "routes";
 
 // Material Dashboard 2 React contexts
-import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "context";
+import {
+  useMaterialUIController,
+  setMiniSidenav,
+  setOpenConfigurator,
+} from "context";
 
 // Images
 import brandWhite from "assets/images/webploit-logo.png";
@@ -44,12 +48,11 @@ import Tables from "layouts/tables";
 import Vulnerability_Details from "layouts/vulnerability_details";
 import Quick_scan from "layouts/quick_scan";
 import Custom_scan from "layouts/custom_scan";
-
-
+import SubdomainScan from "layouts/subdomain_scan";
+import EndpointParser from "layouts/endpoint_parser";
+import DeepScan from "layouts/deep_scan";
 
 export default function App() {
-
-
   const [controller, dispatch] = useMaterialUIController();
   const {
     miniSidenav,
@@ -64,7 +67,6 @@ export default function App() {
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const [rtlCache, setRtlCache] = useState(null);
   const { pathname } = useLocation();
-
 
   // Cache for the rtl
   useMemo(() => {
@@ -93,7 +95,8 @@ export default function App() {
   };
 
   // Change the openConfigurator state
-  const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
+  const handleConfiguratorOpen = () =>
+    setOpenConfigurator(dispatch, !openConfigurator);
 
   // Setting the dir attribute for the body element
   useEffect(() => {
@@ -113,7 +116,14 @@ export default function App() {
       }
 
       if (route.route) {
-        return <Route exact path={route.route} element={route.component} key={route.key} />;
+        return (
+          <Route
+            exact
+            path={route.route}
+            element={route.component}
+            key={route.key}
+          />
+        );
       }
 
       return null;
@@ -121,7 +131,7 @@ export default function App() {
 
   const configsButton = (
     <>
-    {/* <MDBox
+      {/* <MDBox
       display="flex"
       justifyContent="center"
       alignItems="center"
@@ -142,7 +152,7 @@ export default function App() {
         settings
       </Icon>
     </MDBox> */}
-      </>
+    </>
   );
 
   return direction === "rtl" ? (
@@ -153,7 +163,11 @@ export default function App() {
           <>
             <Sidenav
               color={sidenavColor}
-              brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
+              brand={
+                (transparentSidenav && !darkMode) || whiteSidenav
+                  ? brandDark
+                  : brandWhite
+              }
               brandName=" W E B P L O I T"
               routes={routes}
               onMouseEnter={handleOnMouseEnter}
@@ -165,9 +179,9 @@ export default function App() {
         )}
         {layout === "vr" && <Configurator />}
         <Routes>
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/authentication/sign-up" element={<SignUp/>} />
-        <Route path="*" element={<SignIn/>} />                  
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/authentication/sign-up" element={<SignUp />} />
+          <Route path="*" element={<SignIn />} />
         </Routes>
       </ThemeProvider>
     </CacheProvider>
@@ -178,7 +192,11 @@ export default function App() {
         <>
           <Sidenav
             color={sidenavColor}
-            brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
+            brand={
+              (transparentSidenav && !darkMode) || whiteSidenav
+                ? brandDark
+                : brandWhite
+            }
             brandName=" W E B P L O I T"
             routes={routes}
             onMouseEnter={handleOnMouseEnter}
@@ -192,19 +210,20 @@ export default function App() {
       <Routes>
         {/* {getRoutes(routes)} */}
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/authentication/sign-up" element={<SignUp/>} />
-        <Route path="/full-scan" element={<Tables/>} />
-        <Route path="/vulnerability-details" element={<Vulnerability_Details/>} />
-        <Route path="/authentication/sign-in" element={<SignIn/>} />
-        <Route path="/quick-scan" element={<Quick_scan/>} />
-        <Route path="/custom-scan" element={<Custom_scan/>} />
-        <Route path="*" element={<SignIn/>} />
-
+        <Route path="/authentication/sign-up" element={<SignUp />} />
+        <Route path="/full-scan" element={<Tables />} />
+        <Route
+          path="/vulnerability-details"
+          element={<Vulnerability_Details />}
+        />
+        <Route path="/authentication/sign-in" element={<SignIn />} />
+        <Route path="/quick-scan" element={<Quick_scan />} />
+        <Route path="/endpoint-parser" element={<EndpointParser />} />
+        <Route path="/subdomain-scan" element={<SubdomainScan />} />
+        <Route path="/deep-scan" element={<DeepScan />} />
+        <Route path="/custom-scan" element={<Custom_scan />} />
+        <Route path="*" element={<SignIn />} />
       </Routes>
     </ThemeProvider>
   );
-  
-  
-  
-  
 }

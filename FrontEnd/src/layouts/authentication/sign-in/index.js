@@ -25,7 +25,7 @@ import MDButton from "components/MDButton";
 import BasicLayout from "layouts/authentication/components/BasicLayout";
 
 // Images
-import bgImage from "assets/images/bg-sign-in-basic.jpeg";
+import bgImage from "assets/images/bg-sign-in-basic.jpg";
 
 function Basic() {
   const [rememberMe, setRememberMe] = useState(false);
@@ -39,58 +39,58 @@ function Basic() {
   const [error, setError] = useState(false);
   const [success, setSuccess] = useState(false);
 
-const handleSignIn = async (e) => {
-  e.preventDefault();
-  const API_URL = "http://localhost:5000";
+  const handleSignIn = async (e) => {
+    e.preventDefault();
+    const API_URL = "http://localhost:5000";
 
-  try {
-    const response = await fetch(`${API_URL}/signin`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({
-        email: email,
-        password: password,
-      }),
-    });
+    try {
+      const response = await fetch(`${API_URL}/signin`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
 
-    console.log("Response:", response); // Add this line
+      console.log("Response:", response); // Add this line
 
-    const data = await response.json();
+      const data = await response.json();
 
-    console.log("Data:", data); // Add this line
+      console.log("Data:", data); // Add this line
 
-    if (data.status === "success") {
-      const cookies = response.headers.get("set-cookie");
-      if (cookies) {
-        const sessionId = cookies
-          .split(";")
-          .find((cookie) => cookie.startsWith("session"))
-          .split("=")[1];
-        localStorage.setItem("sessionId", sessionId);
+      if (data.status === "success") {
+        const cookies = response.headers.get("set-cookie");
+        if (cookies) {
+          const sessionId = cookies
+            .split(";")
+            .find((cookie) => cookie.startsWith("session"))
+            .split("=")[1];
+          localStorage.setItem("sessionId", sessionId);
+        }
+
+        setSuccess(true);
+        setError(false);
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 2000);
+      } else {
+        setError(true);
+        setSuccess(false);
+        setErrorMessage(data.message);
       }
-
-      setSuccess(true);
-      setError(false);
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 2000);
-    } else {
+    } catch (error) {
+      console.error("Error:", error); // Add this line
       setError(true);
       setSuccess(false);
-      setErrorMessage(data.message);
+      setErrorMessage(
+        "An error occurred while signing in. Please try again later."
+      );
     }
-  } catch (error) {
-    console.error("Error:", error); // Add this line
-    setError(true);
-    setSuccess(false);
-    setErrorMessage("An error occurred while signing in. Please try again later.");
-  }
-};
-
-  
+  };
 
   return (
     <BasicLayout image={bgImage}>
@@ -109,19 +109,39 @@ const handleSignIn = async (e) => {
           <MDTypography variant="h4" fontWeight="medium" color="white" mt={1}>
             Sign in
           </MDTypography>
-          <Grid container spacing={3} justifyContent="center" sx={{ mt: 1, mb: 2 }}>
+          <Grid
+            container
+            spacing={3}
+            justifyContent="center"
+            sx={{ mt: 1, mb: 2 }}
+          >
             <Grid item xs={2}>
-              <MDTypography component={MuiLink} href="#" variant="body1" color="white">
+              <MDTypography
+                component={MuiLink}
+                href="#"
+                variant="body1"
+                color="white"
+              >
                 <FacebookIcon color="inherit" />
               </MDTypography>
             </Grid>
             <Grid item xs={2}>
-              <MDTypography component={MuiLink} href="#" variant="body1" color="white">
+              <MDTypography
+                component={MuiLink}
+                href="#"
+                variant="body1"
+                color="white"
+              >
                 <GitHubIcon color="inherit" />
               </MDTypography>
             </Grid>
             <Grid item xs={2}>
-              <MDTypography component={MuiLink} href="#" variant="body1" color="white">
+              <MDTypography
+                component={MuiLink}
+                href="#"
+                variant="body1"
+                color="white"
+              >
                 <GoogleIcon color="inherit" />
               </MDTypography>
             </Grid>
@@ -167,7 +187,12 @@ const handleSignIn = async (e) => {
               </MDTypography>
             </MDBox>
             <MDBox mt={4} mb={1}>
-              <MDButton onClick={handleSignIn} variant="gradient" color="info" fullWidth>
+              <MDButton
+                onClick={handleSignIn}
+                variant="gradient"
+                color="info"
+                fullWidth
+              >
                 sign in
               </MDButton>
             </MDBox>
@@ -191,7 +216,6 @@ const handleSignIn = async (e) => {
       </Card>
     </BasicLayout>
   );
-  
- }  
+}
 
 export default Basic;

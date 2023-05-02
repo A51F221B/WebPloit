@@ -21,29 +21,34 @@ import Vulnerability_Details from "layouts/vulnerability_details";
 import Billing from "layouts/billing";
 import RTL from "layouts/rtl";
 import Notifications from "layouts/notifications";
+import EndpointParser from "layouts/endpoint_parser";
 import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
+import DeepScan from "layouts/deep_scan";
 import SignUp from "layouts/authentication/sign-up";
+import SubdomainScan from "layouts/subdomain_scan";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
-import LogoutIcon from '@mui/icons-material/Logout';
-import HomeIcon from '@mui/icons-material/Home';
-import InfoIcon from '@mui/icons-material/Info';
-import GitHubIcon from '@mui/icons-material/GitHub';
-import ArticleIcon from '@mui/icons-material/Article';
-import RadarIcon from '@mui/icons-material/Radar';
-import DetailsIcon from '@mui/icons-material/Details';
-import SpeedIcon from '@mui/icons-material/Speed';
-
+import LogoutIcon from "@mui/icons-material/Logout";
+import HomeIcon from "@mui/icons-material/Home";
+import InfoIcon from "@mui/icons-material/Info";
+import GitHubIcon from "@mui/icons-material/GitHub";
+import ArticleIcon from "@mui/icons-material/Article";
+import RadarIcon from "@mui/icons-material/Radar";
+import DetailsIcon from "@mui/icons-material/Details";
+import SpeedIcon from "@mui/icons-material/Speed";
+import LastPageIcon from "@mui/icons-material/LastPage";
 import Quick_scan from "layouts/quick_scan";
 import Custom_scan from "layouts/custom_scan";
+import AvTimerIcon from "@mui/icons-material/AvTimer";
+import FilterListIcon from "@mui/icons-material/FilterList";
 // import Vulnerability_Details from "layouts/vulnerability_details";
 
 const routes = [
   {
     type: "collapse",
-    name: "Home",
+    name: "Dashboard",
     key: "dashboard",
     icon: <HomeIcon fontSize="small">dashboard</HomeIcon>,
     route: "/dashboard",
@@ -51,17 +56,33 @@ const routes = [
   },
   {
     type: "collapse",
+    name: "Subdomain Scan",
+    key: "subdomain-scan",
+    icon: <FilterListIcon fontSize="small">subdomain-scan</FilterListIcon>,
+    route: "/subdomain-scan",
+    component: <SubdomainScan />,
+  },
+  {
+    type: "collapse",
     name: "Endpoint Parser",
-    key: "quick-scan",
-    icon: <SpeedIcon fontSize="small">quick-scan</SpeedIcon>,
-    route: "/quick-scan",
-    component: <Quick_scan />,
+    key: "endoint-parser",
+    icon: <LastPageIcon fontSize="small">endpoint-parser</LastPageIcon>,
+    route: "/endpoint-parser",
+    component: <EndpointParser />,
+  },
+  {
+    type: "collapse",
+    name: "Deep Scan",
+    key: "deep-scan",
+    icon: <RadarIcon fontSize="small">deep-scan</RadarIcon>,
+    route: "/deep-scan",
+    component: <DeepScan />,
   },
   {
     type: "collapse",
     name: "Custom Scan",
     key: "custom-scan",
-    icon: <RadarIcon fontSize="small">custom-scan</RadarIcon>,
+    icon: <AvTimerIcon fontSize="small">custom-scan</AvTimerIcon>,
     route: "/custom-scan",
     component: <Custom_scan />,
   },
