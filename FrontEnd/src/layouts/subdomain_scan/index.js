@@ -12,86 +12,15 @@ import { styled } from "@mui/material/styles";
 import withAuth from "./withAuth";
 import ErrorBoundary from "./ErrorBoundary";
 
-const EndpointList = styled("div")({
-  display: "flex",
-  flexDirection: "column",
-  gap: "10px",
-  alignItems: "flex-start",
-  overflow: "auto",
-  height: "400px",
-  padding: "0px 10px",
-  border: "1px solid rgba(224, 224, 224, 1)",
-  borderRadius: "5px",
-  margin: "10px 0px",
-});
 
-const EndpointItem = styled("div")({
-  fontSize: "16px",
+const headerCellStyle = {
+  padding: "12px 24px",
+  borderBottom: "1px solid #e0e0e0",
+  backgroundColor: "#2196f3",
   fontWeight: "bold",
-  color: "rgba(33, 150, 243, 1)",
-  cursor: "pointer",
-  transition: "all 0.2s",
-  "&:hover": {
-    color: "rgba(33, 150, 243, 0.7)",
-  },
-});
+  color: "white",
+};
 
-function SubdomainScanTable({ columns, data }) {
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable({ columns, data });
-
-  return (
-    <table {...getTableProps()} style={{ border: 'solid 1px black', width: '100%' }}>
-      <thead>
-        {headerGroups.map(headerGroup => (
-          <tr {...headerGroup.getHeaderGroupProps()}>
-            {headerGroup.headers.map(column => (
-              <th
-                {...column.getHeaderProps()}
-                style={{
-                  borderBottom: 'solid 3px black',
-                  background: 'aliceblue',
-                  color: 'black',
-                  fontWeight: 'bold',
-                }}
-              >
-                {column.render('Header')}
-              </th>
-            ))}
-          </tr>
-        ))}
-      </thead>
-      <tbody {...getTableBodyProps()}>
-        {rows.map(row => {
-          prepareRow(row);
-          return (
-            <tr {...row.getRowProps()}>
-              {row.cells.map(cell => {
-                return (
-                  <td
-                    {...cell.getCellProps()}
-                    style={{
-                      padding: '10px',
-                      border: 'solid 1px gray',
-                      background: 'papayawhip',
-                    }}
-                  >
-                    {cell.render('Cell')}
-                  </td>
-                );
-              })}
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
-  );
-}
 
 function SubdomainScan() {
   const { columns, rows } = QuickScanData();
@@ -128,6 +57,7 @@ function SubdomainScan() {
       console.error("Error scanning URL:", error);
     }
   };
+
 
   return (
     <DashboardLayout>
@@ -177,15 +107,34 @@ function SubdomainScan() {
                 {scanResults && (
                   <div style={{ overflowX: "auto" }}>
                     <ErrorBoundary>
-                      <SubdomainScanTable
-                        columns={[
-                          { Header: "IP Address", accessor: "ip_address" },
-                          { Header: "Subdomain", accessor: "subdomain" },
-                          { Header: "Server", accessor: "server" },
-                          { Header: "Code", accessor: "code" },
-                        ]}
-                        data={scanResults}
-                      />
+                      <table style={{ borderCollapse: "collapse", width: "100%" }}>
+                        <thead>
+                          <tr>
+                            <th style={headerCellStyle}>IP Address</th>
+                            <th style={headerCellStyle}>Subdomain</th>
+                            <th style={headerCellStyle}>Server</th>
+                            <th style={headerCellStyle}>Code</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {scanResults.map((result) => (
+                            <tr key={result.ip_address}>
+                              <td style={{ padding: "12px 24px", borderBottom: "1px solid #e0e0e0" }}>
+                                {result.ip_address}
+                              </td>
+                              <td style={{ padding: "12px 24px", borderBottom: "1px solid #e0e0e0" }}>
+                                {result.subdomain}
+                              </td>
+                              <td style={{ padding: "12px 24px", borderBottom: "1px solid #e0e0e0" }}>
+                                {result.server}
+                              </td>
+                              <td style={{ padding: "12px 24px", borderBottom: "1px solid #e0e0e0" }}>
+                                {result.code}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </ErrorBoundary>
                   </div>
                 )}
@@ -196,6 +145,7 @@ function SubdomainScan() {
       </MDBox>
     </DashboardLayout>
   );
-}
+
+  }
 
 export default withAuth(SubdomainScan);

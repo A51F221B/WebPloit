@@ -22,11 +22,32 @@ function ScanDetails({ results }) {
 
   const exportPDF = () => {
     const doc = new jsPDF();
+    let currentPageY = 30; // Start tracking the current Y position on the page
+  
+    // Add border around the page
+    doc.setLineWidth(1);
+    doc.rect(10, 10, 190, 277);
+  
+    // Add heading
+    doc.setFontSize(20);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(30, 144, 255); // DodgerBlue
+    doc.text("Webploit Scan Report", 14, 20);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(0, 0, 0); // Reset text color to black
+  
+    // Add scan time
+    const currentTime = new Date();
+    const formattedTime = currentTime.toLocaleString();
+    doc.setFontSize(14);
+    doc.text(`Scan time: ${formattedTime}`, 14, currentPageY);
   
     results.forEach((result, index) => {
       doc.setFontSize(16);
-      doc.text(`Scan Details: ${result.vuln}`, 14, 20 + index * 80);
+      doc.setTextColor(255, 69, 0); // OrangeRed
+      doc.text(`Scan Details: ${result.vuln}`, 14, currentPageY + 20);
       doc.setFontSize(12);
+      doc.setTextColor(0, 0, 0); // Reset text color to black
   
       const tableRows = [
         ["Parameter", "Value"],
@@ -37,17 +58,37 @@ function ScanDetails({ results }) {
       ];
   
       doc.autoTable({
-        startY: 30 + index * 80,
+        startY: currentPageY + 30,
         headStyles: { fillColor: "#1976d2", textColor: "#fff", fontStyle: "bold" },
         bodyStyles: { textColor: "#333" },
         margin: { top: 20 },
         tableWidth: 185,
         body: tableRows,
+        alternateRowStyles: { fillColor: "#f0f0f0" }, // Add alternating row colors
       });
+  
+      // Update the current Y position after adding the table
+      currentPageY = doc.previousAutoTable.finalY;
+  
+      // Check if there is enough space for the next Scan Details section
+      if (currentPageY + 80 > 287) {
+        doc.addPage();
+        doc.rect(10, 10, 190, 277); // Add border to the new page
+        currentPageY = 20; // Reset the Y position for the new page
+      } else {
+        currentPageY += 20; // Add space between sections
+      }
     });
   
     doc.save("scan_results.pdf");
   };
+  
+  
+  
+  
+  
+  
+  
   
   
 
