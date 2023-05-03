@@ -285,7 +285,7 @@ def endpoints():
             values['retries']=data['retries']
 
         # making sure that vulns if from ['openredirect','xss','sqli','xxe']
-        if data.get('vulns') and data['vulns'] in ['openredirect','xss','sqli','xxe','xss']:
+        if data.get('vulns') and data['vulns'] in ['openredirect','xss','sqli','xxe','xss','sqlipost']:
             values['vulns']=data['vulns']
         else:
             return {
@@ -402,7 +402,7 @@ def deepscan():
             "message": "No vulnerabilities specified"
         }, 500
         # making sure that vulns if from ['openredirect','xss','sqli','xxe']
-    if data.get('vuln') and data['vuln'] not in ['openredirect','xss','sqli','xxe','xss']:
+    if data.get('vuln') and data['vuln'] not in ['openredirect','xss','sqli','xxe','xss','sqlipost']:
         return {
             "status": "error",
             "message": "Invalid value for vulns"

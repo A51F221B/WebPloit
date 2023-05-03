@@ -6,10 +6,13 @@ import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import DataTable from "examples/Tables/DataTable";
 import QuickScanData from "layouts/quick_scan/data/QuickScanData";
 import { styled } from "@mui/material/styles";
 import withAuth from "./withAuth";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 
 const EndpointList = styled("div")({
   display: "flex",
@@ -39,6 +42,7 @@ function EndpointParser() {
   const { columns, rows } = QuickScanData();
   const [url, setUrl] = useState("");
   const [scanResults, setScanResults] = useState(null);
+  const [vulnerability, setVulnerability] = useState("openredirect");
 
   const handleScanClick = async () => {
     try {
@@ -49,8 +53,9 @@ function EndpointParser() {
         },
         body: JSON.stringify({
           url: url,
-          vulns: "openredirect",
+          vulns: vulnerability,
         }),
+        credentials: "include",
       });
 
       if (response.ok) {
@@ -64,6 +69,7 @@ function EndpointParser() {
       console.error("Error scanning URL:", error);
     }
   };
+
 
   return (
     <DashboardLayout>
@@ -98,6 +104,24 @@ function EndpointParser() {
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                 ></input>
+                <FormControl
+                  variant="standard"
+                  style={{ marginLeft: "20px", marginBottom: "20px" }}
+                >
+                  <InputLabel id="vulnerability-label">Vulnerability</InputLabel>
+                  <Select
+                    labelId="vulnerability-label"
+                    id="vulnerability-select"
+                    value={vulnerability}
+                    onChange={(e) => setVulnerability(e.target.value)}
+                  >
+                    <MenuItem value="openredirect">Open Redirect</MenuItem>
+                    <MenuItem value="sqli">SQLi</MenuItem>
+                    <MenuItem value="sqlipost">SQLi POST</MenuItem>
+                    <MenuItem value="xxe">XXE</MenuItem>
+                    <MenuItem value="xss">XSS</MenuItem>
+                  </Select>
+                </FormControl>
                 <div style={{ margin: "20px 0px" }}>
                   <MDButton
                     variant="gradient"
@@ -157,6 +181,8 @@ function EndpointParser() {
       </MDBox>
     </DashboardLayout>
   );
+  
+  
 }
 
 export default withAuth(EndpointParser);

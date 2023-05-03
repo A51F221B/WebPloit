@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTable } from "react-table";
 import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import MDBox from "components/MDBox";
@@ -6,10 +7,10 @@ import MDTypography from "components/MDTypography";
 import MDButton from "components/MDButton";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
-import DataTable from "examples/Tables/DataTable";
 import QuickScanData from "layouts/quick_scan/data/QuickScanData";
 import { styled } from "@mui/material/styles";
 import withAuth from "./withAuth";
+import ErrorBoundary from "./ErrorBoundary";
 
 const EndpointList = styled("div")({
   display: "flex",
@@ -35,6 +36,63 @@ const EndpointItem = styled("div")({
   },
 });
 
+function SubdomainScanTable({ columns, data }) {
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+  } = useTable({ columns, data });
+
+  return (
+    <table {...getTableProps()} style={{ border: 'solid 1px black', width: '100%' }}>
+      <thead>
+        {headerGroups.map(headerGroup => (
+          <tr {...headerGroup.getHeaderGroupProps()}>
+            {headerGroup.headers.map(column => (
+              <th
+                {...column.getHeaderProps()}
+                style={{
+                  borderBottom: 'solid 3px black',
+                  background: 'aliceblue',
+                  color: 'black',
+                  fontWeight: 'bold',
+                }}
+              >
+                {column.render('Header')}
+              </th>
+            ))}
+          </tr>
+        ))}
+      </thead>
+      <tbody {...getTableBodyProps()}>
+        {rows.map(row => {
+          prepareRow(row);
+          return (
+            <tr {...row.getRowProps()}>
+              {row.cells.map(cell => {
+                return (
+                  <td
+                    {...cell.getCellProps()}
+                    style={{
+                      padding: '10px',
+                      border: 'solid 1px gray',
+                      background: 'papayawhip',
+                    }}
+                  >
+                    {cell.render('Cell')}
+                  </td>
+                );
+              })}
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  );
+}
+
 function SubdomainScan() {
   const { columns, rows } = QuickScanData();
   const [url, setUrl] = useState("");
@@ -42,21 +100,27 @@ function SubdomainScan() {
 
   const handleScanClick = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/endpoints", {
+      const response = await fetch("http://localhost:5000/api/subdomains", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           url: url,
-          vulns: "openredirect",
+          aggressive: true,
         }),
+        credentials: "include",
       });
 
       if (response.ok) {
         const data = await response.json();
-        const endpoints = data.data.map((url) => ({ endpoint: url }));
-        setScanResults(endpoints);
+        const formattedData = data.data.map((item) => ({
+          ip_address: item.subdomain,
+          subdomain: item.ip_address,
+          server: item.server,
+          code: item.code,
+        }));
+        setScanResults(formattedData);
       } else {
         console.error("Failed to scan URL");
       }
@@ -112,42 +176,17 @@ function SubdomainScan() {
               <MDBox pt={3}>
                 {scanResults && (
                   <div style={{ overflowX: "auto" }}>
-                    <table
-                      style={{ borderCollapse: "collapse", width: "100%" }}
-                    >
-                      <thead>
-                        <tr>
-                          <th
-                            style={{
-                              backgroundColor: "#007aff",
-                              color: "white",
-                              padding: "10px 20px",
-                              textAlign: "left",
-                              borderBottom: "1px solid #ddd",
-                            }}
-                          >
-                            Found Endpoints
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {scanResults.map((result, index) => (
-                          <tr key={index}>
-                            <td
-                              style={{
-                                padding: "10px 20px",
-                                borderBottom:
-                                  index === scanResults.length - 1
-                                    ? "none"
-                                    : "1px solid #ddd",
-                              }}
-                            >
-                              {result.endpoint}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                    <ErrorBoundary>
+                      <SubdomainScanTable
+                        columns={[
+                          { Header: "IP Address", accessor: "ip_address" },
+                          { Header: "Subdomain", accessor: "subdomain" },
+                          { Header: "Server", accessor: "server" },
+                          { Header: "Code", accessor: "code" },
+                        ]}
+                        data={scanResults}
+                      />
+                    </ErrorBoundary>
                   </div>
                 )}
               </MDBox>
