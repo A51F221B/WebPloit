@@ -28,8 +28,14 @@ function DeepScan() {
   };
   
 
-
   const handleScanClick = async () => {
+    // Check if the URL is valid
+    const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
+    if (!urlRegex.test(url)) {
+      alert("Invalid URL provided. Please enter a valid URL.");
+      return;
+    }
+  
     try {
       const response = await fetch("http://localhost:5000/api/deepscan", {
         method: "POST",
@@ -42,17 +48,21 @@ function DeepScan() {
         }),
         credentials: "include",
       });
-
+  
+      const data = await response.json();
+  
       if (response.ok) {
-        const data = await response.json();
         setScanResults(data.results);
       } else {
-        console.error("Failed to scan URL");
+        // Handle API errors
+        console.error("Error scanning URL:", data);
+        alert(`Error: ${data.message}`);
       }
     } catch (error) {
       console.error("Error scanning URL:", error);
     }
   };
+  
 
   return (
     <DashboardLayout>

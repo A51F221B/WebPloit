@@ -35,7 +35,20 @@ function CustomScan() {
     const selectedVulns = Object.keys(vulnerabilities).filter(
       (key) => vulnerabilities[key]
     );
-
+  
+    // Check if the URL is valid
+    const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
+    if (!urlRegex.test(url)) {
+      alert("Invalid URL provided. Please enter a valid URL.");
+      return;
+    }
+  
+    // Check if any vulnerabilities are selected
+    if (selectedVulns.length === 0) {
+      alert("Please select at least one vulnerability.");
+      return;
+    }
+  
     try {
       const response = await fetch("http://localhost:5000/api/scan", {
         method: "POST",
@@ -45,10 +58,10 @@ function CustomScan() {
         body: JSON.stringify({ url, vuln: selectedVulns.join(",") }),
         credentials: "include",
       });
-
+  
       const data = await response.json();
       setMessage(data.message);
-
+  
       if (data.status === "success") {
         setResults(data.results);
       } else {
@@ -61,6 +74,7 @@ function CustomScan() {
       setResults(null);
     }
   };
+  
 
   return (
     <DashboardLayout>

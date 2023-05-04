@@ -20,7 +20,7 @@
         {
             "type": "regex",
             "part": "body",
-            "regex": "\\b(SELECT|UPDATE|DELETE|INSERT|DROP|ALTER|CREATE|TRUNCATE|TABLE|DATABASE)\\b.*(\bFROM\b|\bINTO\b|\bSET\b|\bVALUES\b).*|Syntax error|Unknown column|You have an error in your SQL syntax|error in your SQL syntax|mysql_fetch_array\\(\\) expects parameter 1 to be resource|Warning: mysql_num_rows\\(\\): supplied argument is not a valid MySQL result resource"
+            "regex": "mysql_fetch_|not a valid MySQL|not a legal PLSQL identifer|mysql_connect\\(\\)|(SELECT\\s+[^:>]+\\sFROM\\s+[^:>]+\\sWHERE\\s+)|(at\\s[[:alnum:]\\/\\._]+\\sline\\s\\d+)|ociparse\\(\\):|must be a syntactically valid variable|CFSQLTYPE|Unknown column '|Microsoft OLE DB Provider for SQL|SQL QUERY FAILURE:|Syntax error.{1,50}in query|You have an error in your SQL syntax|Unclosed quotation mark"
         },
         {
             "type": "status",

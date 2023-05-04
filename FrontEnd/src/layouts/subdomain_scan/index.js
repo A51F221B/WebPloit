@@ -28,6 +28,16 @@ function SubdomainScan() {
   const [scanResults, setScanResults] = useState(null);
 
   const handleScanClick = async () => {
+    // Check if the URL is valid
+    const urlRegex = /^(ftp|http|https):\/\/[^ "]+$/;
+    if (!urlRegex.test(url)) {
+      alert("Invalid URL provided. Please enter a valid URL.");
+      return;
+    }
+  
+    // Strip off the http:// or https:// from the URL
+    const formattedUrl = url.substring(url.indexOf("//") + 2);
+  
     try {
       const response = await fetch("http://localhost:5000/api/subdomains", {
         method: "POST",
@@ -35,14 +45,15 @@ function SubdomainScan() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          url: url,
+          url: formattedUrl, // Use the formatted URL here
           aggressive: true,
         }),
         credentials: "include",
       });
-
+  
+      const data = await response.json();
+  
       if (response.ok) {
-        const data = await response.json();
         const formattedData = data.data.map((item) => ({
           ip_address: item.subdomain,
           subdomain: item.ip_address,
@@ -51,12 +62,16 @@ function SubdomainScan() {
         }));
         setScanResults(formattedData);
       } else {
-        console.error("Failed to scan URL");
+        // Handle API errors
+        console.error("Error scanning URL:", data);
+        alert(`Error: ${data.message}`);
       }
     } catch (error) {
       console.error("Error scanning URL:", error);
     }
   };
+  
+  
 
 
   return (
